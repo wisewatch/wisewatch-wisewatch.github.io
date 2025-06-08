@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Now</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#e50914">
+    <meta name="description" content="Discover what's trending in movies and TV shows">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/logo-192.png">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Media Finder">
+</head>
+<body>
+    <button onclick="location.href='index.html'" class="back-btn">← Back</button>
+    <div class="container">
+        <h1>Trending Now</h1>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('movies')">Movies</button>
+            <button class="tab-btn" onclick="showTab('shows')">TV Shows</button>
+        </div>
+        <div id="moviesTab" class="tab-content active">
+            <h2>Trending Movies</h2>
+            <div id="trendingMovies" class="results-container"></div>
+        </div>
+        <div id="showsTab" class="tab-content">
+            <h2>Trending TV Shows</h2>
+            <div id="trendingShows" class="results-container"></div>
+        </div>
+    </div>
+    <script src="trending.js"></script>
+</body>
+</html> 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="icon" href="/images/logo.png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <button onclick="location.href='../index.html'" class="back-btn">← Back</button>
+    <div class="container">
+        <h1>Profile</h1>
+        
+        <div class="profile-section">
+            <div class="profile-avatar">
+                <img id="profileImage" src="../images/default-avatar.png" alt="Profile Picture">
+                <div class="change-picture-btn">
+                    <label for="avatarInput">Change Picture</label>
+                    <input type="file" id="avatarInput" accept="image/*">
+                </div>
+            </div>
+            <div class="profile-info">
+                <input type="text" id="username" placeholder="Enter username">
+                <input type="email" id="email" placeholder="Enter email">
+            </div>
+        </div>
+
+        <div class="preferences-section">
+            <h2>Favorite Genres</h2>
+            <div class="genre-list" id="profileGenreList">
+                <button class="genre-btn" onclick="toggleGenre(this)">Action</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Adventure</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Animation</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Comedy</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Crime</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Documentary</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Drama</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Family</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Fantasy</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">History</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Horror</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Music</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Mystery</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Romance</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Science Fiction</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Thriller</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">War</button>
+                <button class="genre-btn" onclick="toggleGenre(this)">Western</button>
+            </div>
+        </div>
+
+        <div class="watch-history-section">
+            <h2>Watch History</h2>
+            <button onclick="location.href='watch-history.html'" class="choice-btn">View Full Watch History</button>
+        </div>
+        <div class="watch-history-section">
+            <h2>Watchlist</h2>
+            <button onclick="location.href='watchlist.html'" class="choice-btn">View Full Watchlist</button>
+        </div>
+
+        <button onclick="saveProfile()" class="choice-btn">Save Profile</button>
+    </div>
+    <script src="profile.js"></script>
+</body>
+</html> 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show and Movie Finder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#e50914">
+    <meta name="description" content="Find movies and TV shows with streaming information">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/logo-192.png">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Media Finder">
+</head>
+<body>
+    <div class="container">
+        <img src="images/logo1.png" alt="Show & Movie Finder Logo" class="logo">
+        <h1>Welcome to the </h1><h1>WiseWatch - Show and Movie Finder</h1>
+        <p>Discover your next favorite series or film! Tell me what genres you love or shows/movies you've enjoyed, and I'll recommend something perfect for your next binge-watch.</p>
+        <br><br>
+        <h1>Which would you like to use?</h1>
+        <div class="button-container">
+            <button onclick="location.href='movie-finder.html'" class="choice-btn">Movie Finder</button>
+            <button onclick="location.href='show-finder.html'" class="choice-btn">Show Finder</button>
+            <button onclick="location.href='profile-page/profile.html'" class="choice-btn">View Profile</button>
+        </div>
+    </div>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html> 

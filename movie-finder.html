@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Finder</title>
+    <link rel="icon" href="images/logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#e50914">
+    <meta name="description" content="Find movies with streaming information">
+    <link rel="apple-touch-icon" href="images/logo-192.png">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Media Finder">
+</head>
+<body>
+    <button onclick="location.href='index.html'" class="back-btn">← Back</button>
+    <div class="container">
+        <h1>Movie Finder</h1>
+        
+        <div class="search-section">
+            <input type="text" id="movieSearch" placeholder="Enter a movie you like..." class="search-input">
+            <button onclick="searchSimilarMovies()" class="choice-btn">Find Similar Movies</button>
+        </div>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <p>Select your favorite genres:</p>
+        <div class="genre-list" id="genreList">
+            <button class="genre-btn" onclick="toggleGenre(this)">Action</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Adventure</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Animation</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Comedy</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Crime</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Documentary</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Drama</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Family</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Fantasy</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">History</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Horror</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Music</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Mystery</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Romance</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Science Fiction</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Thriller</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">War</button>
+            <button class="genre-btn" onclick="toggleGenre(this)">Western</button>
+        </div>
+        <button class="choice-btn" onclick="findMovies()" type="button">Find Movies</button>
+        <div id="movieResults" class="results-container"></div>
+        <button id="loadMoreBtn" onclick="loadMoreMovies()" class="choice-btn" style="display: none;">Load More</button>
+    </div>
+    <script src="movie-finder.js"></script>
+</body>
+</html> 

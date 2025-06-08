@@ -1,2 +1,2 @@
-# wisewatch-wisewatch.github.io
-wisewatch
+# show-and-movie-finder
+show-and-movie-finder

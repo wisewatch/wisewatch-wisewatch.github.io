@@ -1,0 +1,23 @@
+{
+    "name": "WiseWatch - Show and Movie Finder",
+    "short_name": "WiseWatch",
+    "description": "Find movies and TV shows with streaming information",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#e605ff",
+    "theme_color": "#e605ff",
+    "icons": [
+        {
+            "src": "images/logo1.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+} 
