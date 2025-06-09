@@ -36,6 +36,13 @@
 
     <div class="container">
         <img src="images/logo1.png" alt="Show & Movie Finder Logo" class="logo">
+        
+        <!-- User Info -->
+        <div id="userInfo" class="user-info" style="display: none;">
+            <span id="username"></span>
+            <button onclick="logout()" class="btn btn-outline-danger btn-sm">Logout</button>
+        </div>
+
         <h1>Welcome to the </h1><h1>WiseWatch - Show and Movie Finder</h1>
         <p>Discover your next favorite series or film! Tell me what genres you love or shows/movies you've enjoyed, and I'll recommend something perfect for your next binge-watch.</p>
         <br><br>
@@ -84,6 +91,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
     <script>
+        // Check login status
+        window.onload = function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Show user info
+            const userInfo = document.getElementById('userInfo');
+            const username = document.getElementById('username');
+            userInfo.style.display = 'flex';
+            username.textContent = `Welcome, ${currentUser}`;
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
         // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
