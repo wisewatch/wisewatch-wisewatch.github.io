@@ -26,7 +26,7 @@
         <div id="loginForm" class="auth-form">
             <h2>Login</h2>
             <div class="form-group">
-                <input type="text" id="loginUsername" class="form-control" placeholder="Username" required>
+                <input type="email" id="loginEmail" class="form-control" placeholder="Email" required>
             </div>
             <div class="form-group">
                 <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
@@ -43,7 +43,7 @@
         <div id="registerForm" class="auth-form" style="display: none;">
             <h2>Register</h2>
             <div class="form-group">
-                <input type="text" id="registerUsername" class="form-control" placeholder="Username" required>
+                <input type="email" id="registerEmail" class="form-control" placeholder="Email" required>
             </div>
             <div class="form-group">
                 <input type="password" id="registerPassword" class="form-control" placeholder="Password" required>
@@ -57,6 +57,36 @@
 
         <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
     </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { 
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            doc, 
+            setDoc, 
+            getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Make auth and functions available globally
+        window.auth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.db = db;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.doc = doc;
+
+        // Check auth state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
 
     <script>
         // Theme toggle functionality
@@ -96,12 +126,12 @@
         }
 
         // Register new user
-        function register() {
-            const username = document.getElementById('registerUsername').value;
+        async function register() {
+            const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (!username || !password || !confirmPassword) {
+            if (!email || !password || !confirmPassword) {
                 showError('Please fill in all fields');
                 return;
             }
@@ -111,62 +141,46 @@
                 return;
             }
 
-            // Get existing users or initialize empty array
-            const users = JSON.parse(localStorage.getItem('users')) || [];
+            try {
+                // Create user in Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
 
-            // Check if username already exists
-            if (users.some(user => user.username === username)) {
-                showError('Username already exists');
-                return;
+                // Create user document in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    watchlist: [],
+                    watchHistory: [],
+                    createdAt: new Date().toISOString()
+                });
+
+                // Store user info in localStorage
+                localStorage.setItem('currentUser', email);
+                window.location.href = 'index.html';
+            } catch (error) {
+                showError(error.message);
             }
-
-            // Add new user
-            users.push({
-                username,
-                password, // In a real app, this should be hashed
-                watchlist: [],
-                watchHistory: []
-            });
-
-            // Save to localStorage
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Auto login after registration
-            localStorage.setItem('currentUser', username);
-            window.location.href = 'index.html';
         }
 
         // Login user
-        function login() {
-            const username = document.getElementById('loginUsername').value;
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (!username || !password) {
+            if (!email || !password) {
                 showError('Please fill in all fields');
                 return;
             }
 
-            // Get users from localStorage
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-
-            // Find user
-            const user = users.find(u => u.username === username && u.password === password);
-
-            if (!user) {
-                showError('Invalid username or password');
-                return;
-            }
-
-            // Set current user
-            localStorage.setItem('currentUser', username);
-            window.location.href = 'index.html';
-        }
-
-        // Check if user is already logged in
-        window.onload = function() {
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Store user info in localStorage
+                localStorage.setItem('currentUser', email);
                 window.location.href = 'index.html';
+            } catch (error) {
+                showError(error.message);
             }
         }
 
@@ -176,5 +190,28 @@
             window.location.href = 'index.html';
         }
     </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAevXI9JVIF_UvaJA2IgZ2Npz6dLEs2j6w",
+          authDomain: "wisewatch-1b6af.firebaseapp.com",
+          projectId: "wisewatch-1b6af",
+          storageBucket: "wisewatch-1b6af.firebasestorage.app",
+          messagingSenderId: "246028407902",
+          appId: "1:246028407902:web:d9d436fc7da0e85af950cf",
+          measurementId: "G-ZWSWN3SRE7"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+      </script>
 </body>
 </html> 

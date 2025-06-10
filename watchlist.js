@@ -1,3 +1,12 @@
+import { auth, db } from './firebase-config.js';
+import { 
+    doc, 
+    getDoc, 
+    updateDoc,
+    arrayUnion,
+    arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 const USER_ID = 'user1'; // In a real app, this would come from authentication
 let currentFilter = 'all';
 
@@ -428,5 +437,83 @@ async function findSimilarShows(showId) {
     } catch (error) {
         console.error('Error finding recommended shows:', error);
         return [];
+    }
+}
+
+// Get user's watchlist from Firestore
+async function getWatchlist() {
+    const user = auth.currentUser;
+    if (!user) {
+        if (localStorage.getItem('currentUser') === 'Guest') {
+            return JSON.parse(localStorage.getItem('guestWatchlist')) || [];
+        }
+        window.location.href = 'login.html';
+        return [];
+    }
+
+    try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            return userDoc.data().watchlist || [];
+        }
+        return [];
+    } catch (error) {
+        console.error("Error getting watchlist:", error);
+        return [];
+    }
+}
+
+// Add show to watchlist
+async function addToWatchlist(show) {
+    const user = auth.currentUser;
+    if (!user) {
+        if (localStorage.getItem('currentUser') === 'Guest') {
+            const guestWatchlist = JSON.parse(localStorage.getItem('guestWatchlist')) || [];
+            guestWatchlist.push(show);
+            localStorage.setItem('guestWatchlist', JSON.stringify(guestWatchlist));
+            return;
+        }
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+            watchlist: arrayUnion(show)
+        });
+    } catch (error) {
+        console.error("Error adding to watchlist:", error);
+    }
+}
+
+// Remove show from watchlist
+async function removeFromWatchlist(showId) {
+    const user = auth.currentUser;
+    if (!user) {
+        if (localStorage.getItem('currentUser') === 'Guest') {
+            const guestWatchlist = JSON.parse(localStorage.getItem('guestWatchlist')) || [];
+            const updatedWatchlist = guestWatchlist.filter(show => show.id !== showId);
+            localStorage.setItem('guestWatchlist', JSON.stringify(updatedWatchlist));
+            return;
+        }
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            const watchlist = userDoc.data().watchlist || [];
+            const showToRemove = watchlist.find(show => show.id === showId);
+            if (showToRemove) {
+                const userRef = doc(db, "users", user.uid);
+                await updateDoc(userRef, {
+                    watchlist: arrayRemove(showToRemove)
+                });
+            }
+        }
+    } catch (error) {
+        console.error("Error removing from watchlist:", error);
     }
 } 
