@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <!-- Add Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -59,6 +61,39 @@
     </div>
 
     <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://iqmlaseukgxnrmivvytk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxbWxhc2V1a2d4bnJtaXZ2eXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MTQ0NzksImV4cCI6MjA2NTA5MDQ3OX0.31zQ0O11OmGsz9K-4uD7pENJ-1dt9vRFObNvSo3HXqE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Test Supabase connection
+        async function testSupabaseConnection() {
+            try {
+                const { data, error } = await supabaseClient.from('profiles').select('count').limit(1);
+                if (error) {
+                    console.error('Supabase connection test: Not connected', error);
+                    return false;
+                }
+                console.log('Supabase connection test: Connected');
+                return true;
+            } catch (error) {
+                console.error('Supabase connection test: Error', error);
+                return false;
+            }
+        }
+
+        // Initialize the page
+        async function initializePage() {
+            const isConnected = await testSupabaseConnection();
+            if (!isConnected) {
+                alert('Unable to connect to the server. Please refresh the page and try again.');
+                return;
+            }
+        }
+
+        // Call initialize when the page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+
         // Global functions for form toggling
         function showRegisterForm() {
             console.log('Showing register form');
@@ -83,99 +118,93 @@
 
         // Global login function
         async function handleLogin() {
-            if (!window.supabase) {
-                showError('Authentication system not initialized. Please try again.');
+            if (!await testSupabaseConnection()) {
+                alert('Connection error. Please refresh the page and try again.');
                 return;
             }
 
-            console.log('Login button clicked');
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (!email || !password) {
-                showError('Please fill in all fields');
-                return;
-            }
-
             try {
-                console.log('Attempting to sign in...');
-                const { data, error } = await window.supabase.auth.signInWithPassword({
-                    email,
-                    password,
+                console.log('Attempting login for:', email);
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
                 });
 
                 if (error) {
                     console.error('Login error:', error);
-                    throw error;
+                    alert(error.message);
+                    return;
                 }
 
-                console.log('Login successful:', data);
-                localStorage.setItem('currentUser', email);
-                window.location.href = 'index.html';
+                if (data?.user) {
+                    console.log('Login successful:', data);
+                    localStorage.setItem('currentUser', email);
+                    window.location.href = 'index.html';
+                } else {
+                    console.error('No user data returned');
+                    alert('Login failed. Please try again.');
+                }
             } catch (error) {
                 console.error('Login error:', error);
-                showError(error.message || 'Failed to login. Please try again.');
+                alert('An error occurred during login. Please try again.');
             }
         }
 
         // Global register function
         async function handleRegister() {
-            if (!window.supabase) {
-                showError('Authentication system not initialized. Please try again.');
+            if (!await testSupabaseConnection()) {
+                alert('Connection error. Please refresh the page and try again.');
                 return;
             }
 
-            console.log('Register button clicked');
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (!email || !password || !confirmPassword) {
-                showError('Please fill in all fields');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showError('Passwords do not match');
+            if (!email || !password) {
+                alert('Please fill in all fields');
                 return;
             }
 
             try {
-                console.log('Attempting to sign up...');
-                const { data, error } = await window.supabase.auth.signUp({
-                    email,
-                    password,
+                console.log('Starting registration process...');
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        emailRedirectTo: 'https://wisewatch.github.io/wisewatch/login.html'
+                    }
                 });
+
+                console.log('Registration response:', { data, error });
 
                 if (error) {
                     console.error('Registration error:', error);
-                    throw error;
+                    alert(error.message);
+                    return;
                 }
 
-                console.log('Registration successful:', data);
-
-                const { error: profileError } = await window.supabase
-                    .from('profiles')
-                    .insert([
-                        {
-                            id: data.user.id,
-                            email: email,
-                            watchlist: [],
-                            watch_history: []
-                        }
-                    ]);
-
-                if (profileError) {
-                    console.error('Profile creation error:', profileError);
-                    throw profileError;
+                if (data?.user) {
+                    console.log('Registration successful, user data:', data.user);
+                    alert('Registration successful! Please check your email for verification link.');
+                    
+                    // Clear the form fields manually
+                    document.getElementById('registerEmail').value = '';
+                    document.getElementById('registerPassword').value = '';
+                    
+                    // Switch to login form
+                    document.getElementById('loginForm').style.display = 'block';
+                    document.getElementById('registerForm').style.display = 'none';
+                    return;
                 }
 
-                console.log('Profile created successfully');
-                localStorage.setItem('currentUser', email);
-                window.location.href = 'index.html';
+                console.error('No user data in response');
+                alert('Registration failed. Please try again.');
             } catch (error) {
-                console.error('Registration error:', error);
-                showError(error.message || 'Failed to register. Please try again.');
+                console.error('Unexpected error during registration:', error);
+                alert('An unexpected error occurred. Please try again.');
             }
         }
 
@@ -203,44 +232,6 @@
         } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.body.setAttribute('data-theme', 'dark');
         }
-    </script>
-
-    <script type="module">
-        // Import and initialize Supabase
-        import { supabase } from './supabase-config.js';
-        
-        // Initialize Supabase
-        async function initializeSupabase() {
-            try {
-                // Test the connection
-                const { data: { session }, error } = await supabase.auth.getSession();
-                
-                if (error) {
-                    throw error;
-                }
-
-                // Make Supabase available globally
-                window.supabase = supabase;
-                console.log('Supabase initialized successfully');
-                
-                // Set up auth state change listener
-                supabase.auth.onAuthStateChange((event, session) => {
-                    console.log('Auth state changed:', event, session);
-                    if (session) {
-                        window.location.href = 'index.html';
-                    }
-                });
-
-                return true;
-            } catch (error) {
-                console.error('Failed to initialize Supabase:', error);
-                showError('Authentication system failed to initialize. Please refresh the page.');
-                return false;
-            }
-        }
-
-        // Initialize Supabase when the page loads
-        initializeSupabase();
     </script>
 </body>
 </html> 
