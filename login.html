@@ -33,12 +33,22 @@
             <div class="form-group">
                 <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
             </div>
-            <button onclick="handleLogin()" class="btn btn-primary">Login</button>
-            <p class="mt-3">Don't have an account? <button onclick="showRegisterForm()" class="btn btn-link p-0">Register</button></p>
-            <div class="divider">
-                <span>or</span>
+            <div class="form-group">
+                <button onclick="handleLogin()" class="btn btn-primary">Login</button>
             </div>
-            <button onclick="handleGuest()" class="btn btn-outline-secondary">Continue as Guest</button>
+            <div class="social-login">
+                <p>Or login with:</p>
+                <button onclick="handleGoogleLogin()" class="btn btn-social btn-google">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button onclick="handleGithubLogin()" class="btn btn-social btn-github">
+                    <i class="fab fa-github"></i> GitHub
+                </button>
+                <button onclick="handleDiscordLogin()" class="btn btn-social btn-discord">
+                    <i class="fab fa-discord"></i> Discord
+                </button>
+            </div>
+            <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register</a></p>
         </div>
 
         <!-- Register Form -->
@@ -51,14 +61,193 @@
                 <input type="password" id="registerPassword" class="form-control" placeholder="Password" required>
             </div>
             <div class="form-group">
-                <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" required>
+                <input type="text" id="username" class="form-control" placeholder="Username" required>
             </div>
-            <button onclick="handleRegister()" class="btn btn-primary">Register</button>
-            <p class="mt-3">Already have an account? <button onclick="showLoginForm()" class="btn btn-link p-0">Login</button></p>
+            <div class="form-group">
+                <label>Favorite Genres</label>
+                <div class="genres-grid">
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Action">
+                        <label>Action</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Adventure">
+                        <label>Adventure</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Animation">
+                        <label>Animation</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Comedy">
+                        <label>Comedy</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Crime">
+                        <label>Crime</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Documentary">
+                        <label>Documentary</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Drama">
+                        <label>Drama</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Family">
+                        <label>Family</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Fantasy">
+                        <label>Fantasy</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="History">
+                        <label>History</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Horror">
+                        <label>Horror</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Music">
+                        <label>Music</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Mystery">
+                        <label>Mystery</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Romance">
+                        <label>Romance</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Sci-Fi">
+                        <label>Sci-Fi</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Thriller">
+                        <label>Thriller</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="War">
+                        <label>War</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="genre" value="Western">
+                        <label>Western</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button onclick="handleRegister()" class="btn btn-primary">Register</button>
+            </div>
+            <div class="social-login">
+                <p>Or register with:</p>
+                <button onclick="handleGoogleLogin()" class="btn btn-social btn-google">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button onclick="handleGithubLogin()" class="btn btn-social btn-github">
+                    <i class="fab fa-github"></i> GitHub
+                </button>
+                <button onclick="handleDiscordLogin()" class="btn btn-social btn-discord">
+                    <i class="fab fa-discord"></i> Discord
+                </button>
+            </div>
+            <p class="mt-3">Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+        </div>
+
+        <!-- User Info Section -->
+        <div id="userInfo" style="display: none;">
+            <h2>Welcome!</h2>
+            <p>Logged in as: <span id="userEmail"></span></p>
+            <button onclick="handleLogout()" class="btn btn-danger">Logout</button>
         </div>
 
         <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
     </div>
+
+    <style>
+        /* ... existing styles ... */
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .social-login p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .btn-social {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-google {
+            background-color: #DB4437;
+        }
+        .btn-github {
+            background-color: #333;
+        }
+        .btn-discord {
+            background-color: #7289DA;
+        }
+        .btn-social:hover {
+            opacity: 0.9;
+        }
+        .btn-social i {
+            font-size: 18px;
+        }
+        #userInfo {
+            text-align: center;
+            padding: 20px;
+        }
+        #userInfo h2 {
+            margin-bottom: 15px;
+        }
+        #userInfo p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .genres-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .form-check input[type="checkbox"] {
+            margin: 0;
+        }
+        .form-check label {
+            margin: 0;
+            cursor: pointer;
+        }
+    </style>
 
     <script>
         // Initialize Supabase
@@ -95,18 +284,33 @@
         document.addEventListener('DOMContentLoaded', initializePage);
 
         // Global functions for form toggling
-        function showRegisterForm() {
-            console.log('Showing register form');
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
+        function toggleForms() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const userInfo = document.getElementById('userInfo');
+            
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+            userInfo.style.display = 'none';
         }
 
+        // Show login form
         function showLoginForm() {
-            console.log('Showing login form');
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'none';
+        }
+
+        // Show register form
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
         }
 
         // Global error display function
@@ -162,9 +366,11 @@
 
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
+            const username = document.getElementById('username').value;
+            const favoriteGenres = Array.from(document.querySelectorAll('input[name="genre"]:checked')).map(cb => cb.value);
 
-            if (!email || !password) {
-                alert('Please fill in all fields');
+            if (!email || !password || !username) {
+                alert('Please fill in all required fields');
                 return;
             }
 
@@ -188,11 +394,34 @@
 
                 if (data?.user) {
                     console.log('Registration successful, user data:', data.user);
+                    
+                    // Create profile in the database
+                    const { error: profileError } = await supabaseClient
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: data.user.id,
+                                email: email,
+                                username: username,
+                                favorite_genres: favoriteGenres,
+                                watchlist: [],
+                                watch_history: []
+                            }
+                        ]);
+
+                    if (profileError) {
+                        console.error('Profile creation error:', profileError);
+                        alert('Account created but profile setup failed. Please contact support.');
+                        return;
+                    }
+
                     alert('Registration successful! Please check your email for verification link.');
                     
                     // Clear the form fields manually
                     document.getElementById('registerEmail').value = '';
                     document.getElementById('registerPassword').value = '';
+                    document.getElementById('username').value = '';
+                    document.querySelectorAll('input[name="genre"]:checked').forEach(cb => cb.checked = false);
                     
                     // Switch to login form
                     document.getElementById('loginForm').style.display = 'block';
@@ -208,12 +437,78 @@
             }
         }
 
-        // Global guest function
-        function handleGuest() {
-            console.log('Guest button clicked');
-            localStorage.setItem('currentUser', 'Guest');
-            window.location.href = 'index.html';
+        // Social login functions
+        async function handleGoogleLogin() {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: 'https://wisewatch.github.io/login.html'
+                    }
+                });
+
+                if (error) {
+                    console.error('Google login error:', error);
+                    alert(error.message);
+                }
+            } catch (error) {
+                console.error('Google login error:', error);
+                alert('An error occurred during Google login');
+            }
         }
+
+        async function handleGithubLogin() {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: {
+                        redirectTo: 'https://wisewatch.github.io/login.html'
+                    }
+                });
+
+                if (error) {
+                    console.error('GitHub login error:', error);
+                    alert(error.message);
+                }
+            } catch (error) {
+                console.error('GitHub login error:', error);
+                alert('An error occurred during GitHub login');
+            }
+        }
+
+        async function handleDiscordLogin() {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'discord',
+                    options: {
+                        redirectTo: 'https://wisewatch.github.io/login.html'
+                    }
+                });
+
+                if (error) {
+                    console.error('Discord login error:', error);
+                    alert(error.message);
+                }
+            } catch (error) {
+                console.error('Discord login error:', error);
+                alert('An error occurred during Discord login');
+            }
+        }
+
+        // Handle OAuth callback
+        async function handleOAuthCallback() {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            if (session) {
+                localStorage.setItem('currentUser', session.user.email);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Check for OAuth callback on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializePage();
+            await handleOAuthCallback();
+        });
 
         // Theme toggle functionality
         function toggleTheme() {
@@ -232,6 +527,39 @@
         } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.body.setAttribute('data-theme', 'dark');
         }
+
+        // Logout function
+        function handleLogout() {
+            // Clear local storage
+            localStorage.clear();
+            
+            // Redirect to login page
+            window.location.replace('login.html');
+        }
+
+        // Check if user is logged in
+        async function checkAuthStatus() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                // User is logged in
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userEmail').textContent = session.user.email;
+            } else {
+                // User is not logged in
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        }
+
+        // Update page load handler
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializePage();
+            await handleOAuthCallback();
+            await checkAuthStatus();
+        });
     </script>
 </body>
 </html> 

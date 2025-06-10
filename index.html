@@ -40,7 +40,7 @@
         <!-- User Info -->
         <div id="userInfo" class="user-info" style="display: none;">
             <span id="username"></span>
-            <button onclick="logout()" class="btn btn-outline-danger btn-sm">Logout</button>
+            <button onclick="handleLogout()" class="btn btn-outline-danger btn-sm">Logout</button>
         </div>
 
         <h1>Welcome to the </h1><h1>WiseWatch - Show and Movie Finder</h1>
@@ -153,5 +153,59 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
       </script>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">WiseWatch</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="watch-history.html">Watch History</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <button onclick="handleLogout()" class="btn btn-outline-light">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://iqmlaseukgxnrmivvytk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxbWxhc2V1a2d4bnJtaXZ2eXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MTQ0NzksImV4cCI6MjA2NTA5MDQ3OX0.31zQ0O11OmGsz9K-4uD7pENJ-1dt9vRFObNvSo3HXqE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Check if user is logged in
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Logout function
+        async function handleLogout() {
+            try {
+                await supabaseClient.auth.signOut();
+                localStorage.clear();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Force logout even if there's an error
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Check auth status when page loads
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
 </body>
 </html> 
