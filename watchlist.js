@@ -6,6 +6,7 @@ import {
     arrayUnion,
     arrayRemove
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { supabase } from './supabase-config.js';
 
 const USER_ID = 'user1'; // In a real app, this would come from authentication
 let currentFilter = 'all';
@@ -440,10 +441,10 @@ async function findSimilarShows(showId) {
     }
 }
 
-// Get user's watchlist from Firestore
+// Get user's watchlist from Supabase
 async function getWatchlist() {
-    const user = auth.currentUser;
-    if (!user) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
         if (localStorage.getItem('currentUser') === 'Guest') {
             return JSON.parse(localStorage.getItem('guestWatchlist')) || [];
         }
@@ -452,11 +453,14 @@ async function getWatchlist() {
     }
 
     try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-            return userDoc.data().watchlist || [];
-        }
-        return [];
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('watchlist')
+            .eq('id', session.user.id)
+            .single();
+
+        if (error) throw error;
+        return data.watchlist || [];
     } catch (error) {
         console.error("Error getting watchlist:", error);
         return [];
@@ -465,8 +469,8 @@ async function getWatchlist() {
 
 // Add show to watchlist
 async function addToWatchlist(show) {
-    const user = auth.currentUser;
-    if (!user) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
         if (localStorage.getItem('currentUser') === 'Guest') {
             const guestWatchlist = JSON.parse(localStorage.getItem('guestWatchlist')) || [];
             guestWatchlist.push(show);
@@ -478,10 +482,14 @@ async function addToWatchlist(show) {
     }
 
     try {
-        const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, {
-            watchlist: arrayUnion(show)
-        });
+        const { error } = await supabase
+            .from('profiles')
+            .update({
+                watchlist: supabase.sql`array_append(watchlist, ${show})`
+            })
+            .eq('id', session.user.id);
+
+        if (error) throw error;
     } catch (error) {
         console.error("Error adding to watchlist:", error);
     }
@@ -489,8 +497,8 @@ async function addToWatchlist(show) {
 
 // Remove show from watchlist
 async function removeFromWatchlist(showId) {
-    const user = auth.currentUser;
-    if (!user) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
         if (localStorage.getItem('currentUser') === 'Guest') {
             const guestWatchlist = JSON.parse(localStorage.getItem('guestWatchlist')) || [];
             const updatedWatchlist = guestWatchlist.filter(show => show.id !== showId);
@@ -502,17 +510,25 @@ async function removeFromWatchlist(showId) {
     }
 
     try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-            const watchlist = userDoc.data().watchlist || [];
-            const showToRemove = watchlist.find(show => show.id === showId);
-            if (showToRemove) {
-                const userRef = doc(db, "users", user.uid);
-                await updateDoc(userRef, {
-                    watchlist: arrayRemove(showToRemove)
-                });
-            }
-        }
+        // First get the current watchlist
+        const { data, error: fetchError } = await supabase
+            .from('profiles')
+            .select('watchlist')
+            .eq('id', session.user.id)
+            .single();
+
+        if (fetchError) throw fetchError;
+
+        // Remove the show from the array
+        const updatedWatchlist = data.watchlist.filter(show => show.id !== showId);
+
+        // Update the watchlist
+        const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ watchlist: updatedWatchlist })
+            .eq('id', session.user.id);
+
+        if (updateError) throw updateError;
     } catch (error) {
         console.error("Error removing from watchlist:", error);
     }

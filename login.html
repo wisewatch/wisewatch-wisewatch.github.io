@@ -31,12 +31,12 @@
             <div class="form-group">
                 <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
             </div>
-            <button onclick="login()" class="btn btn-primary">Login</button>
-            <p class="mt-3">Don't have an account? <a href="#" onclick="toggleAuthForms()">Register</a></p>
+            <button onclick="handleLogin()" class="btn btn-primary">Login</button>
+            <p class="mt-3">Don't have an account? <button onclick="showRegisterForm()" class="btn btn-link p-0">Register</button></p>
             <div class="divider">
                 <span>or</span>
             </div>
-            <button onclick="continueAsGuest()" class="btn btn-outline-secondary">Continue as Guest</button>
+            <button onclick="handleGuest()" class="btn btn-outline-secondary">Continue as Guest</button>
         </div>
 
         <!-- Register Form -->
@@ -51,44 +51,141 @@
             <div class="form-group">
                 <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" required>
             </div>
-            <button onclick="register()" class="btn btn-primary">Register</button>
-            <p class="mt-3">Already have an account? <a href="#" onclick="toggleAuthForms()">Login</a></p>
+            <button onclick="handleRegister()" class="btn btn-primary">Register</button>
+            <p class="mt-3">Already have an account? <button onclick="showLoginForm()" class="btn btn-link p-0">Login</button></p>
         </div>
 
         <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
     </div>
 
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { 
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            doc, 
-            setDoc, 
-            getDoc 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Make auth and functions available globally
-        window.auth = auth;
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.db = db;
-        window.setDoc = setDoc;
-        window.getDoc = getDoc;
-        window.doc = doc;
-
-        // Check auth state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                window.location.href = 'index.html';
-            }
-        });
-    </script>
-
     <script>
+        // Global functions for form toggling
+        function showRegisterForm() {
+            console.log('Showing register form');
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function showLoginForm() {
+            console.log('Showing login form');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Global error display function
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        // Global login function
+        async function handleLogin() {
+            if (!window.supabase) {
+                showError('Authentication system not initialized. Please try again.');
+                return;
+            }
+
+            console.log('Login button clicked');
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            try {
+                console.log('Attempting to sign in...');
+                const { data, error } = await window.supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+
+                if (error) {
+                    console.error('Login error:', error);
+                    throw error;
+                }
+
+                console.log('Login successful:', data);
+                localStorage.setItem('currentUser', email);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(error.message || 'Failed to login. Please try again.');
+            }
+        }
+
+        // Global register function
+        async function handleRegister() {
+            if (!window.supabase) {
+                showError('Authentication system not initialized. Please try again.');
+                return;
+            }
+
+            console.log('Register button clicked');
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!email || !password || !confirmPassword) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            try {
+                console.log('Attempting to sign up...');
+                const { data, error } = await window.supabase.auth.signUp({
+                    email,
+                    password,
+                });
+
+                if (error) {
+                    console.error('Registration error:', error);
+                    throw error;
+                }
+
+                console.log('Registration successful:', data);
+
+                const { error: profileError } = await window.supabase
+                    .from('profiles')
+                    .insert([
+                        {
+                            id: data.user.id,
+                            email: email,
+                            watchlist: [],
+                            watch_history: []
+                        }
+                    ]);
+
+                if (profileError) {
+                    console.error('Profile creation error:', profileError);
+                    throw profileError;
+                }
+
+                console.log('Profile created successfully');
+                localStorage.setItem('currentUser', email);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError(error.message || 'Failed to register. Please try again.');
+            }
+        }
+
+        // Global guest function
+        function handleGuest() {
+            console.log('Guest button clicked');
+            localStorage.setItem('currentUser', 'Guest');
+            window.location.href = 'index.html';
+        }
+
         // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
@@ -106,112 +203,44 @@
         } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.body.setAttribute('data-theme', 'dark');
         }
+    </script>
 
-        // Toggle between login and register forms
-        function toggleAuthForms() {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
-            registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
-            errorMessage.style.display = 'none';
-        }
-
-        // Show error message
-        function showError(message) {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-        }
-
-        // Register new user
-        async function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (!email || !password || !confirmPassword) {
-                showError('Please fill in all fields');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showError('Passwords do not match');
-                return;
-            }
-
+    <script type="module">
+        // Import and initialize Supabase
+        import { supabase } from './supabase-config.js';
+        
+        // Initialize Supabase
+        async function initializeSupabase() {
             try {
-                // Create user in Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                // Test the connection
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    throw error;
+                }
 
-                // Create user document in Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    email: email,
-                    watchlist: [],
-                    watchHistory: [],
-                    createdAt: new Date().toISOString()
+                // Make Supabase available globally
+                window.supabase = supabase;
+                console.log('Supabase initialized successfully');
+                
+                // Set up auth state change listener
+                supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event, session);
+                    if (session) {
+                        window.location.href = 'index.html';
+                    }
                 });
 
-                // Store user info in localStorage
-                localStorage.setItem('currentUser', email);
-                window.location.href = 'index.html';
+                return true;
             } catch (error) {
-                showError(error.message);
+                console.error('Failed to initialize Supabase:', error);
+                showError('Authentication system failed to initialize. Please refresh the page.');
+                return false;
             }
         }
 
-        // Login user
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            if (!email || !password) {
-                showError('Please fill in all fields');
-                return;
-            }
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                // Store user info in localStorage
-                localStorage.setItem('currentUser', email);
-                window.location.href = 'index.html';
-            } catch (error) {
-                showError(error.message);
-            }
-        }
-
-        // Continue as guest function
-        function continueAsGuest() {
-            localStorage.setItem('currentUser', 'Guest');
-            window.location.href = 'index.html';
-        }
+        // Initialize Supabase when the page loads
+        initializeSupabase();
     </script>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-      
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-          apiKey: "AIzaSyAevXI9JVIF_UvaJA2IgZ2Npz6dLEs2j6w",
-          authDomain: "wisewatch-1b6af.firebaseapp.com",
-          projectId: "wisewatch-1b6af",
-          storageBucket: "wisewatch-1b6af.firebasestorage.app",
-          messagingSenderId: "246028407902",
-          appId: "1:246028407902:web:d9d436fc7da0e85af950cf",
-          measurementId: "G-ZWSWN3SRE7"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-      </script>
 </body>
 </html> 
