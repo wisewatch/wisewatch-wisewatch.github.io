@@ -19,6 +19,7 @@ Discover your next favorite series or film! Tell me what genres you love or show
 ![wwss2](https://raw.githubusercontent.com/wisewatch/wisewatch.github.io/refs/heads/main/screenshots/wwss2.png)
 ![wwss3](https://raw.githubusercontent.com/wisewatch/wisewatch.github.io/refs/heads/main/screenshots/wwss3.png)
 ![wwss4](https://raw.githubusercontent.com/wisewatch/wisewatch.github.io/refs/heads/main/screenshots/wwss4.png)
+![wwss5](https://raw.githubusercontent.com/wisewatch/wisewatch.github.io/refs/heads/main/screenshots/wwss5.png)
 
 
 made by KingPenguin1400 & Cursor (AI)

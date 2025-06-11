@@ -48,6 +48,10 @@
                     <i class="fab fa-discord"></i> Discord
                 </button>
             </div>
+            <div class="guest-login">
+                <p>Or</p>
+                <button onclick="handleGuest()" class="btn btn-outline-secondary">Continue as Guest</button>
+            </div>
             <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register</a></p>
         </div>
 
@@ -246,6 +250,27 @@
         .form-check label {
             margin: 0;
             cursor: pointer;
+        }
+        .guest-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .guest-login p {
+            margin: 10px 0;
+            color: #666;
+        }
+        .btn-outline-secondary {
+            border: 1px solid #6c757d;
+            color: #6c757d;
+            background: transparent;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            color: white;
         }
     </style>
 
@@ -560,6 +585,12 @@
             await handleOAuthCallback();
             await checkAuthStatus();
         });
+
+        // Guest login function
+        function handleGuest() {
+            localStorage.setItem('currentUser', 'Guest');
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html> 
