@@ -523,20 +523,18 @@ function createShowElement(show) {
     return element;
 }
 
-function addToWatchlist(type, item) {
+window.addToWatchlist = function(type, item) {
     const watchlist = JSON.parse(localStorage.getItem(type + 'Watchlist')) || [];
-    
     // Check if item is already in watchlist
     if (watchlist.some(existingItem => existingItem.id === item.id)) {
         alert('This item is already in your watchlist!');
         return;
     }
-    
     // Add to watchlist
     watchlist.push(item);
     localStorage.setItem(type + 'Watchlist', JSON.stringify(watchlist));
     alert('Added to watchlist!');
-}
+};
 
 // Helper to display the searched show info
 async function displaySearchedShowInfo(show, fallbackOverview) {
@@ -581,11 +579,11 @@ async function displaySearchedShowInfo(show, fallbackOverview) {
                 </div>
             </div>
             <div class="movie-actions">
-                <button onclick="addToWatchHistory(${JSON.stringify(show).replace(/"/g, '&quot;')})" class="choice-btn">Add to Watch History</button>
-                <button onclick="addToWatchlist('show', ${JSON.stringify(show).replace(/"/g, '&quot;')})" class="watchlist-btn">Add to Watchlist</button>
+                <button class="choice-btn add-history-btn">Add to Watch History</button>
+                <button class="watchlist-btn">Add to Watchlist</button>
             </div>
         </div>
-        ${show.poster_path ? `<img src="https://image.tmdb.org/t/p/w200${show.poster_path}" alt="${show.name} poster">` : ''}
+        ${show.poster_path ? `<img src=\"https://image.tmdb.org/t/p/w200${show.poster_path}\" alt=\"${show.name} poster\">` : ''}
     `;
     // Add a label
     const label = document.createElement('div');
@@ -593,4 +591,7 @@ async function displaySearchedShowInfo(show, fallbackOverview) {
     label.innerHTML = '<h2>Searched Show</h2>';
     container.appendChild(label);
     container.appendChild(element);
+    // Attach event listeners
+    element.querySelector('.add-history-btn').onclick = () => window.addToWatchHistory(show);
+    element.querySelector('.watchlist-btn').onclick = () => window.addToWatchlist('show', show);
 } 

@@ -105,6 +105,11 @@ async function displaySearchedMovieInfo(movie) {
     label.innerHTML = '<h2>Searched Movie</h2>';
     container.appendChild(label);
     container.appendChild(element);
+    // Attach event listeners for searched-movie box
+    const addHistoryBtn = element.querySelector('.add-history-btn');
+    if (addHistoryBtn) addHistoryBtn.onclick = () => window.addToWatchHistory(movie);
+    const addWatchlistBtn = element.querySelector('.watchlist-btn');
+    if (addWatchlistBtn) addWatchlistBtn.onclick = () => window.addToWatchlist('movie', movie);
 }
 
 async function findMovies() {
@@ -466,7 +471,7 @@ window.addToWatchHistory = async function(movie) {
         
         alert('Added to watch history!');
     } catch (error) {
-        console.error('Error adding to watch history:', error);
+        console.error('Error adding to watch history:', error, movie);
         alert('Error adding to watch history. Please try again.');
     }
 };
@@ -483,6 +488,19 @@ window.toggleDropdown = function(button) {
         content.style.display = 'block';
         arrow.textContent = '▲';
     }
+};
+
+window.addToWatchlist = function(type, item) {
+    const watchlist = JSON.parse(localStorage.getItem(type + 'Watchlist')) || [];
+    // Check if item is already in watchlist
+    if (watchlist.some(existingItem => existingItem.id === item.id)) {
+        alert('This item is already in your watchlist!');
+        return;
+    }
+    // Add to watchlist
+    watchlist.push(item);
+    localStorage.setItem(type + 'Watchlist', JSON.stringify(watchlist));
+    alert('Added to watchlist!');
 };
 
 async function createMovieElement(movie) {
@@ -527,7 +545,7 @@ async function createMovieElement(movie) {
             </div>
 
             <div class="movie-actions">
-                <button onclick="addToWatchHistory(${JSON.stringify(movie).replace(/"/g, '&quot;')})" class="choice-btn">Add to Watch History</button>
+                <button onclick="addToWatchHistory(${JSON.stringify(movie).replace(/"/g, '&quot;')})" class="choice-btn add-history-btn">Add to Watch History</button>
                 <button onclick="addToWatchlist('movie', ${JSON.stringify(movie).replace(/"/g, '&quot;')})" class="watchlist-btn">Add to Watchlist</button>
                 <button onclick="surpriseMe(${JSON.stringify(movie).replace(/"/g, '&quot;')})" class="surprise-btn">Surprise Me</button>
             </div>
@@ -573,19 +591,4 @@ function surpriseMe(currentMovie) {
     `;
     
     document.body.appendChild(modal);
-}
-
-function addToWatchlist(type, item) {
-    const watchlist = JSON.parse(localStorage.getItem(type + 'Watchlist')) || [];
-    
-    // Check if item is already in watchlist
-    if (watchlist.some(existingItem => existingItem.id === item.id)) {
-        alert('This item is already in your watchlist!');
-        return;
-    }
-    
-    // Add to watchlist
-    watchlist.push(item);
-    localStorage.setItem(type + 'Watchlist', JSON.stringify(watchlist));
-    alert('Added to watchlist!');
 } 
