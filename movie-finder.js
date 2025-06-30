@@ -422,7 +422,7 @@ window.addToWatchHistory = async function(movie) {
         const savedProfile = localStorage.getItem(`userProfile_${USER_ID}`);
         let userProfile = savedProfile ? JSON.parse(savedProfile) : { watchHistory: [] };
         
-        if (!userProfile.watchHistory) {
+        if (!Array.isArray(userProfile.watchHistory)) {
             userProfile.watchHistory = [];
         }
         
@@ -510,7 +510,21 @@ async function createMovieElement(movie) {
     const certification = await getMovieCertification(movie.id);
     const streamingInfo = await getStreamingInfo(movie.id);
     const trailerUrl = await getTrailerUrl(movie.id);
-    
+
+    // Get user profile and watch history
+    const savedProfile = localStorage.getItem(`userProfile_${USER_ID}`);
+    let userProfile = savedProfile ? JSON.parse(savedProfile) : { watchHistory: [] };
+    if (!Array.isArray(userProfile.watchHistory)) {
+        userProfile.watchHistory = [];
+    }
+    let watchEntry = userProfile.watchHistory.find(m => m.id === movie.id);
+    let userReaction = watchEntry ? watchEntry.reaction : null;
+
+    // Helper for reaction button highlight
+    function getReactionClass(type) {
+        return userReaction === type ? 'reaction-selected' : '';
+    }
+
     element.innerHTML = `
         <div class="movie-content">
             <div class="movie-header">
@@ -549,10 +563,41 @@ async function createMovieElement(movie) {
                 <button onclick="addToWatchlist('movie', ${JSON.stringify(movie).replace(/"/g, '&quot;')})" class="watchlist-btn">Add to Watchlist</button>
                 <button onclick="surpriseMe(${JSON.stringify(movie).replace(/"/g, '&quot;')})" class="surprise-btn">Surprise Me</button>
             </div>
+            ${watchEntry ? `
+            <div class="reaction-section">
+                <div class="reaction-label">You've seen this! Did you like it?</div>
+                <div class="reaction-buttons">
+                    <button class="reaction-btn ${getReactionClass('like')}" data-reaction="like" title="Like">👍</button>
+                    <button class="reaction-btn ${getReactionClass('meh')}" data-reaction="meh" title="Meh">😐</button>
+                    <button class="reaction-btn ${getReactionClass('dislike')}" data-reaction="dislike" title="Didn't like">👎</button>
+                </div>
+            </div>
+            ` : ''}
         </div>
         ${movie.poster_path ? `<img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" alt="${movie.title} poster">` : ''}
     `;
-    
+
+    // Add event listeners for reaction buttons if present
+    if (watchEntry) {
+        const btns = element.querySelectorAll('.reaction-btn');
+        btns.forEach(btn => {
+            btn.onclick = function() {
+                const reaction = btn.getAttribute('data-reaction');
+                // Update reaction in localStorage
+                const savedProfile = localStorage.getItem(`userProfile_${USER_ID}`);
+                let userProfile = savedProfile ? JSON.parse(savedProfile) : { watchHistory: [] };
+                let entryIdx = userProfile.watchHistory.findIndex(m => m.id === movie.id);
+                if (entryIdx !== -1) {
+                    userProfile.watchHistory[entryIdx].reaction = reaction;
+                    localStorage.setItem(`userProfile_${USER_ID}`, JSON.stringify(userProfile));
+                    // Update UI
+                    btns.forEach(b => b.classList.remove('reaction-selected'));
+                    btn.classList.add('reaction-selected');
+                }
+            };
+        });
+    }
+
     return element;
 }
 
