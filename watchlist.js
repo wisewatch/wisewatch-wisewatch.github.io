@@ -9,7 +9,8 @@ import {
 import { supabase } from './supabase-config.js';
 
 const USER_ID = 'user1'; // In a real app, this would come from authentication
-let currentFilter = 'all';
+let currentMovieFilter = 'all';
+let currentShowFilter = 'all';
 
 // TMDB API configuration
 const TMDB_API_KEY = '8c247ea0b4b56ed2ff7d41c9a833aa77';
@@ -22,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Function to show/hide tabs
-function showTab(tabName) {
+function showTab(tab) {
     // Hide all tab contents
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
     });
     
     // Remove active class from all tab buttons
@@ -33,9 +34,30 @@ function showTab(tabName) {
         btn.classList.remove('active');
     });
     
-    // Show selected tab content and activate its button
-    document.getElementById(tabName + 'Tab').classList.add('active');
+    // Show selected tab content
+    document.getElementById(tab + 'Tab').classList.add('active');
+    
+    // Add active class to selected tab button
     event.target.classList.add('active');
+}
+
+function filterWatchlist(filter, type) {
+    // Update current filter
+    if (type === 'movie') {
+        currentMovieFilter = filter;
+    } else {
+        currentShowFilter = filter;
+    }
+
+    // Update active filter button
+    const filterSection = event.target.parentElement;
+    filterSection.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Reload watchlist with new filter
+    loadWatchlist();
 }
 
 async function getTrailerUrl(id, type) {
@@ -64,13 +86,17 @@ async function loadWatchlist() {
         console.log('Movie watchlist:', movieWatchlist);
         console.log('Show watchlist:', showWatchlist);
 
+        // Apply filters
+        const filteredMovies = filterItems(movieWatchlist, currentMovieFilter);
+        const filteredShows = filterItems(showWatchlist, currentShowFilter);
+
         // Display watchlist immediately without fetching ratings
-        displayWatchlist(movieWatchlist, showWatchlist);
+        displayWatchlist(filteredMovies, filteredShows);
 
         // Then fetch ratings in the background
         try {
             // Fetch age ratings for movies
-            const moviesWithRatings = await Promise.all(movieWatchlist.map(async (movie) => {
+            const moviesWithRatings = await Promise.all(filteredMovies.map(async (movie) => {
                 try {
                     const ratingResponse = await fetch(
                         `${TMDB_BASE_URL}/movie/${movie.id}/release_dates?api_key=${TMDB_API_KEY}`
@@ -87,7 +113,7 @@ async function loadWatchlist() {
             }));
 
             // Fetch age ratings for shows
-            const showsWithRatings = await Promise.all(showWatchlist.map(async (show) => {
+            const showsWithRatings = await Promise.all(filteredShows.map(async (show) => {
                 try {
                     const ratingResponse = await fetch(
                         `${TMDB_BASE_URL}/tv/${show.id}/content_ratings?api_key=${TMDB_API_KEY}`
@@ -531,5 +557,20 @@ async function removeFromWatchlist(showId) {
         if (updateError) throw updateError;
     } catch (error) {
         console.error("Error removing from watchlist:", error);
+    }
+}
+
+function filterItems(items, filter) {
+    switch (filter) {
+        case 'recent':
+            return [...items].sort((a, b) => {
+                const dateA = new Date(a.addedDate || 0);
+                const dateB = new Date(b.addedDate || 0);
+                return dateB - dateA;
+            });
+        case 'rating':
+            return [...items].sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
+        default:
+            return items;
     }
 } 

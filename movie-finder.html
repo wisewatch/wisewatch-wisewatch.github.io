@@ -45,6 +45,39 @@
             <span>OR</span>
         </div>
 
+        <div class="filters-section">
+            <h3>Advanced Filters</h3>
+            <div class="filter-group">
+                <label>Year Range:</label>
+                <div class="year-range">
+                    <input type="number" id="minYear" placeholder="From" min="1900" max="2024">
+                    <span>to</span>
+                    <input type="number" id="maxYear" placeholder="To" min="1900" max="2024">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>Rating:</label>
+                <select id="ratingFilter">
+                    <option value="">Any Rating</option>
+                    <option value="8">8+ Stars</option>
+                    <option value="7">7+ Stars</option>
+                    <option value="6">6+ Stars</option>
+                    <option value="5">5+ Stars</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Age Rating:</label>
+                <select id="ageRatingFilter">
+                    <option value="">Any Rating</option>
+                    <option value="G">G</option>
+                    <option value="PG">PG</option>
+                    <option value="PG-13">PG-13</option>
+                    <option value="R">R</option>
+                    <option value="NC-17">NC-17</option>
+                </select>
+            </div>
+        </div>
+
         <p>Select your favorite genres:</p>
         <div class="genre-list" id="genreList">
             <button class="genre-btn" onclick="toggleGenre(this)">Action</button>
@@ -67,6 +100,7 @@
             <button class="genre-btn" onclick="toggleGenre(this)">Western</button>
         </div>
         <button class="choice-btn" onclick="findMovies()" type="button">Find Movies</button>
+        <div id="searchedMovieInfo"></div>
         <div id="movieResults" class="results-container"></div>
         <button id="loadMoreBtn" onclick="loadMoreMovies()" class="choice-btn" style="display: none;">Load More</button>
     </div>
@@ -92,6 +126,46 @@
             document.body.setAttribute('data-theme', 'dark');
         }
     </script>
+
+    <style>
+        /* ... existing styles ... */
+        .filters-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-group {
+            margin: 15px 0;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        .year-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .year-range input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+    </style>
 
 </body>
 </html> 

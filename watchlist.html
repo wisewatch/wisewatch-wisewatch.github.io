@@ -40,10 +40,20 @@
         </div>
         <div id="moviesTab" class="tab-content active">
             <h2>Movies to Watch</h2>
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="filterWatchlist('all', 'movie')">All</button>
+                <button class="filter-btn" onclick="filterWatchlist('recent', 'movie')">Recently Added</button>
+                <button class="filter-btn" onclick="filterWatchlist('rating', 'movie')">Highest Rated</button>
+            </div>
             <div id="movieWatchlist" class="results-container"></div>
         </div>
         <div id="showsTab" class="tab-content">
             <h2>TV Shows to Watch</h2>
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="filterWatchlist('all', 'show')">All</button>
+                <button class="filter-btn" onclick="filterWatchlist('recent', 'show')">Recently Added</button>
+                <button class="filter-btn" onclick="filterWatchlist('rating', 'show')">Highest Rated</button>
+            </div>
             <div id="showWatchlist" class="results-container"></div>
         </div>
     </div>
@@ -68,5 +78,162 @@
             document.body.setAttribute('data-theme', 'dark');
         }
     </script>
+
+    <style>
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .filter-section {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .watch-history-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .watch-history-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .watch-history-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .type-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .type-badge.movie {
+            background: #e50914;
+            color: white;
+        }
+        .type-badge.show {
+            background: #007bff;
+            color: white;
+        }
+        .watch-history-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .trailer-btn, .remove-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        .trailer-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+        }
+        .watch-history-details {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+        }
+        .poster-image {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .no-poster {
+            width: 100%;
+            height: 300px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            color: var(--text-color);
+        }
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .genre-tag {
+            padding: 4px 8px;
+            background: var(--card-bg);
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .choice-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .choice-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
 </body>
 </html> 

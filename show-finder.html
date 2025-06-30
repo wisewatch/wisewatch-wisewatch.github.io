@@ -37,12 +37,44 @@
         <h1>Show Finder</h1>
         
         <div class="search-section">
-            <input type="text" id="showSearch" placeholder="Enter a show you like..." class="search-input">
+            <input type="text" id="showSearch" placeholder="Enter a TV show you like..." class="search-input">
             <button onclick="searchSimilarShows()" class="choice-btn">Find Similar Shows</button>
         </div>
 
         <div class="divider">
             <span>OR</span>
+        </div>
+
+        <div class="filters-section">
+            <h3>Advanced Filters</h3>
+            <div class="filter-group">
+                <label>Year Range:</label>
+                <div class="year-range">
+                    <input type="number" id="minYear" placeholder="From" min="1900" max="2024">
+                    <span>to</span>
+                    <input type="number" id="maxYear" placeholder="To" min="1900" max="2024">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>Rating:</label>
+                <select id="ratingFilter">
+                    <option value="">Any Rating</option>
+                    <option value="8">8+ Stars</option>
+                    <option value="7">7+ Stars</option>
+                    <option value="6">6+ Stars</option>
+                    <option value="5">5+ Stars</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select id="statusFilter">
+                    <option value="">Any Status</option>
+                    <option value="0">Returning Series</option>
+                    <option value="1">Ended</option>
+                    <option value="2">Canceled</option>
+                    <option value="3">In Production</option>
+                </select>
+            </div>
         </div>
 
         <p>Select your favorite genres:</p>
@@ -65,6 +97,7 @@
             <button class="genre-btn" onclick="toggleGenre(this)">Western</button>
         </div>
         <button class="choice-btn" onclick="findShows()" type="button">Find Shows</button>
+        <div id="searchedShowInfo"></div>
         <div id="showResults" class="results-container"></div>
         <button id="loadMoreBtn" onclick="loadMoreShows()" class="choice-btn" style="display: none;">Load More</button>
     </div>
@@ -90,6 +123,46 @@
             document.body.setAttribute('data-theme', 'dark');
         }
     </script>
+
+    <style>
+        /* ... existing styles ... */
+        .filters-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-group {
+            margin: 15px 0;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        .year-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .year-range input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+    </style>
 
 </body>
 </html> 

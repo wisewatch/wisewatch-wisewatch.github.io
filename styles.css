@@ -1204,3 +1204,29 @@ h1 {
     border-color: var(--border-color);
     color: var(--text-color);
 }
+
+/* Searched Movie Info Styles */
+.searched-movie-label {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.searched-movie {
+    border: 2px solid var(--primary-color, #e50914);
+    background: var(--card-bg, #fff3f3);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    padding: 18px 18px 18px 18px;
+    box-shadow: 0 2px 8px rgba(229,9,20,0.08);
+}
+
+/* Make overview text in searched-movie always black */
+.searched-movie .dropdown-content p {
+    color: #000 !important;
+}
+
+@media (max-width: 600px) {
+    .searched-movie {
+        padding: 10px;
+    }
+}

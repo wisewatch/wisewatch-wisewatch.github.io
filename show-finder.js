@@ -43,13 +43,26 @@ async function searchSimilarShows() {
         
         if (searchData.results.length === 0) {
             document.getElementById('showResults').innerHTML = '<p>No TV shows found matching your search. Please try a different title.</p>';
+            document.getElementById('searchedShowInfo').innerHTML = '';
             return;
         }
 
-        // Get the first show's ID
+        // Get the first show's ID and overview
         const showId = searchData.results[0].id;
+        const searchOverview = searchData.results[0].overview;
         currentSearchParams = { showId };
-        
+
+        // Fetch full details for the searched show
+        const detailsResponse = await fetch(
+            `${TMDB_BASE_URL}/tv/${showId}?api_key=${TMDB_API_KEY}&language=en-US`
+        );
+        const showDetails = await detailsResponse.json();
+        // Add genre_ids for display compatibility
+        if (showDetails.genres) {
+            showDetails.genre_ids = showDetails.genres.map(g => g.id);
+        }
+        await displaySearchedShowInfo(showDetails, searchOverview);
+
         // Get similar shows
         const similarResponse = await fetch(
             `${TMDB_BASE_URL}/tv/${showId}/recommendations?api_key=${TMDB_API_KEY}&page=${currentPage}`
@@ -61,6 +74,7 @@ async function searchSimilarShows() {
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('showResults').innerHTML = `<p>Error: ${error.message}. Please try again later.</p>`;
+        document.getElementById('searchedShowInfo').innerHTML = '';
     }
 }
 
@@ -92,11 +106,42 @@ async function findShows() {
             return;
         }
 
-        currentSearchParams = { genreIds: selectedGenreIds };
+        // Get filter values
+        const minYear = document.getElementById('minYear').value;
+        const maxYear = document.getElementById('maxYear').value;
+        const minRating = document.getElementById('ratingFilter').value;
+        const status = document.getElementById('statusFilter').value;
+
+        // Build the API URL with filters
+        let apiUrl = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${selectedGenreIds.join(',')}&sort_by=vote_average.desc&vote_count.gte=1000&language=en-US&page=${currentPage}`;
+
+        // Add year range if specified
+        if (minYear) {
+            apiUrl += `&first_air_date.gte=${minYear}-01-01`;
+        }
+        if (maxYear) {
+            apiUrl += `&first_air_date.lte=${maxYear}-12-31`;
+        }
+
+        // Add rating filter if specified
+        if (minRating) {
+            apiUrl += `&vote_average.gte=${minRating}`;
+        }
+
+        // Add status filter if specified
+        if (status !== '') {
+            apiUrl += `&with_status=${status}`;
+        }
+
+        currentSearchParams = { 
+            genreIds: selectedGenreIds,
+            minYear,
+            maxYear,
+            minRating,
+            status
+        };
         
-        const showsResponse = await fetch(
-            `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${selectedGenreIds.join(',')}&sort_by=vote_average.desc&vote_count.gte=1000&language=en-US&page=${currentPage}`
-        );
+        const showsResponse = await fetch(apiUrl);
         
         if (!showsResponse.ok) {
             throw new Error(`HTTP error! status: ${showsResponse.status}`);
@@ -124,9 +169,28 @@ async function loadMoreShows() {
                 `${TMDB_BASE_URL}/tv/${currentSearchParams.showId}/similar?api_key=${TMDB_API_KEY}&page=${currentPage}`
             );
         } else {
-            response = await fetch(
-                `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${currentSearchParams.genreIds.join(',')}&sort_by=vote_average.desc&vote_count.gte=1000&language=en-US&page=${currentPage}`
-            );
+            // Build the API URL with filters
+            let apiUrl = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${currentSearchParams.genreIds.join(',')}&sort_by=vote_average.desc&vote_count.gte=1000&language=en-US&page=${currentPage}`;
+
+            // Add year range if specified
+            if (currentSearchParams.minYear) {
+                apiUrl += `&first_air_date.gte=${currentSearchParams.minYear}-01-01`;
+            }
+            if (currentSearchParams.maxYear) {
+                apiUrl += `&first_air_date.lte=${currentSearchParams.maxYear}-12-31`;
+            }
+
+            // Add rating filter if specified
+            if (currentSearchParams.minRating) {
+                apiUrl += `&vote_average.gte=${currentSearchParams.minRating}`;
+            }
+
+            // Add status filter if specified
+            if (currentSearchParams.status !== '') {
+                apiUrl += `&with_status=${currentSearchParams.status}`;
+            }
+
+            response = await fetch(apiUrl);
         }
         
         const data = await response.json();
@@ -268,7 +332,22 @@ async function displayShows(shows, append = false) {
         return;
     }
 
-    for (const show of shows) {
+    // Get watch history
+    const savedProfile = localStorage.getItem(`userProfile_${USER_ID}`);
+    const userProfile = savedProfile ? JSON.parse(savedProfile) : { watchHistory: [] };
+    const watchHistoryIds = userProfile.watchHistory.map(item => item.id);
+
+    // Filter out shows that are in watch history
+    const filteredShows = shows.filter(show => !watchHistoryIds.includes(show.id));
+
+    if (filteredShows.length === 0) {
+        if (!append) {
+            resultsDiv.innerHTML = '<p>No new shows found matching your criteria. Try different filters or check your watch history!</p>';
+        }
+        return;
+    }
+
+    for (const show of filteredShows) {
         const streamingInfo = await getStreamingInfo(show.id);
         const trailerUrl = await getTrailerUrl(show.id);
         
@@ -457,4 +536,61 @@ function addToWatchlist(type, item) {
     watchlist.push(item);
     localStorage.setItem(type + 'Watchlist', JSON.stringify(watchlist));
     alert('Added to watchlist!');
+}
+
+// Helper to display the searched show info
+async function displaySearchedShowInfo(show, fallbackOverview) {
+    const container = document.getElementById('searchedShowInfo');
+    container.innerHTML = '';
+    // Fetch extra info
+    const contentRating = await getShowContentRating(show.id);
+    const streamingInfo = await getStreamingInfo(show.id);
+    const trailerUrl = await getTrailerUrl(show.id);
+    // Build element
+    const element = document.createElement('div');
+    element.className = 'searched-movie'; // reuse style
+    const overview = show.overview && show.overview.trim() ? show.overview : (fallbackOverview || 'No overview available.');
+    element.innerHTML = `
+        <div class="movie-content">
+            <div class="movie-header">
+                <h3>${show.name}</h3>
+                ${trailerUrl ? `
+                    <button class="trailer-btn" onclick="window.open('${trailerUrl}', '_blank')">
+                        <span class="trailer-icon">▶</span>
+                        Watch Trailer
+                    </button>
+                ` : ''}
+            </div>
+            <p>First Air Date: ${show.first_air_date || 'Unknown'}</p>
+            <p>Rating: ${(show.vote_average / 2).toFixed(1)}/5</p>
+            <p>Age Rating: ${contentRating}</p>
+            <div class="dropdown-section">
+                <button class="dropdown-btn" onclick="toggleDropdown(this)">
+                    Overview <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <p>${overview}</p>
+                </div>
+            </div>
+            <div class="dropdown-section">
+                <button class="dropdown-btn" onclick="toggleDropdown(this)">
+                    Where to Watch <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    ${createProviderHTML(streamingInfo)}
+                </div>
+            </div>
+            <div class="movie-actions">
+                <button onclick="addToWatchHistory(${JSON.stringify(show).replace(/"/g, '&quot;')})" class="choice-btn">Add to Watch History</button>
+                <button onclick="addToWatchlist('show', ${JSON.stringify(show).replace(/"/g, '&quot;')})" class="watchlist-btn">Add to Watchlist</button>
+            </div>
+        </div>
+        ${show.poster_path ? `<img src="https://image.tmdb.org/t/p/w200${show.poster_path}" alt="${show.name} poster">` : ''}
+    `;
+    // Add a label
+    const label = document.createElement('div');
+    label.className = 'searched-movie-label';
+    label.innerHTML = '<h2>Searched Show</h2>';
+    container.appendChild(label);
+    container.appendChild(element);
 } 
