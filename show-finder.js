@@ -175,7 +175,7 @@ async function loadMoreShows() {
             // Add year range if specified
             if (currentSearchParams.minYear) {
                 apiUrl += `&first_air_date.gte=${currentSearchParams.minYear}-01-01`;
-            }
+        }
             if (currentSearchParams.maxYear) {
                 apiUrl += `&first_air_date.lte=${currentSearchParams.maxYear}-12-31`;
             }
@@ -343,7 +343,7 @@ async function displayShows(shows, append = false) {
     if (filteredShows.length === 0) {
         if (!append) {
             resultsDiv.innerHTML = '<p>No new shows found matching your criteria. Try different filters or check your watch history!</p>';
-        }
+            }
         return;
     }
 
@@ -356,7 +356,7 @@ async function displayShows(shows, append = false) {
         showElement.innerHTML = `
             <div class="show-content">
                 <div class="show-header">
-                    <h3>${show.name}</h3>
+                <h3>${show.name}</h3>
                     ${trailerUrl ? `
                         <button class="trailer-btn" onclick="window.open('${trailerUrl}', '_blank')">
                             <span class="trailer-icon">▶</span>

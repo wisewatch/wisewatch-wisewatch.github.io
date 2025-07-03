@@ -24,6 +24,7 @@
      crossorigin="anonymous"></script>
 </head>
 <body>
+
     <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()">
         <div class="toggle-icon sun">
@@ -35,11 +36,46 @@
     </div>
 
     <div class="container">
+        <!-- Responsive Dashboard Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent mb-3">
+        <div class="container-fluid justify-content-center">
+            <!-- Wide screens: horizontal nav -->
+            <div class="d-none d-lg-flex btn-group" role="group" aria-label="Dashboard Navigation">
+            <a href="trending.html" class="btn btn-outline-primary">Trending</a>
+            <a href="show-finder.html" class="btn btn-outline-primary">Show Finder</a>
+            <a href="movie-finder.html" class="btn btn-outline-primary">Movie Finder</a>
+            <a href="profile-page/profile.html" class="btn btn-outline-primary">Profile Page</a>
+            <a href="discover.html" class="btn btn-outline-primary">WiseWatches</a>
+            </div>
+            <!-- Small screens: dropdown nav -->
+            <div class="d-lg-none dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dashboardDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Dashboard
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
+                <li><a class="dropdown-item" href="trending.html">Trending</a></li>
+                <li><a class="dropdown-item" href="show-finder.html">Show Finder</a></li>
+                <li><a class="dropdown-item" href="movie-finder.html">Movie Finder</a></li>
+                <li><a class="dropdown-item" href="profile-page/profile.html">Profile Page</a></li>
+                <li><a class="dropdown-item" href="discover.html">WiseWatches</a></li>
+            </ul>
+            </div>
+        </div>
+        </nav>
+        <style>
+        /* Show dropdown on hover for desktop */
+        @media (hover: hover) and (pointer: fine) {
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+        }
+        </style>
         <img src="images/logo1.png" alt="Show & Movie Finder Logo" class="logo">
         
         <!-- User Info -->
         <div id="userInfo" class="user-info" style="display: none;">
-            <span id="username"></span>
+            <div id="welcomeMessage" class="text-center mb-1"></div>
             <button onclick="handleLogout()" class="btn btn-outline-danger btn-sm">Logout</button>
         </div>
 
@@ -56,7 +92,7 @@
         <p>Visitors</p>
         <!--<a href='https://www.free-counters.org/'>powered by Free-Counters.org</a>--> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=34deb05a75fbf7dd87d6fa7c6259ca9b4aa66eed'></script>
         <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349529/t/5"></script>
-        <p>Website Coded By: Adrian Gastelo & Cursor AI, Powered by: Github Pages</p>
+        <br><a href="about.html" target="_self">About Us</a>
     </div>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012177256773101"
@@ -206,6 +242,24 @@
 
         // Check auth status when page loads
         document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+
+    <script>
+        // Welcome message logic
+        function setWelcomeMessage() {
+            let username = 'Guest';
+            try {
+                const profile = localStorage.getItem('userProfile_user1');
+                if (profile) {
+                    const parsed = JSON.parse(profile);
+                    if (parsed.username && parsed.username.trim() !== '') {
+                        username = parsed.username;
+                    }
+                }
+            } catch (e) {}
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${username}`;
+        }
+        setWelcomeMessage();
     </script>
 </body>
 </html> 

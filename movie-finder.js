@@ -77,7 +77,7 @@ async function searchSimilarMovies() {
             movieDetails.genre_ids = movieDetails.genres.map(g => g.id);
         }
         await displaySearchedMovieInfo(movieDetails);
-
+        
         // Get similar movies
         const similarResponse = await fetch(
             `${TMDB_BASE_URL}/movie/${movieId}/recommendations?api_key=${TMDB_API_KEY}&page=${currentPage}&include_adult=false&certification_country=US`

@@ -26,140 +26,16 @@
         
         <!-- Login Form -->
         <div id="loginForm" class="auth-form">
-            <h2>Login</h2>
-            <div class="form-group">
-                <input type="email" id="loginEmail" class="form-control" placeholder="Email" required>
+            <h2>Sign In</h2>
+            <div class="alert alert-info text-center">Registering is under construction.<br>Only guest sign-in is available. You can still use watchlist and watch history and other profile features.</div>
+            <div class="guest-login text-center">
+                <button onclick="handleGuest()" class="btn btn-outline-secondary btn-lg">Continue as Guest</button>
             </div>
-            <div class="form-group">
-                <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
-            </div>
-            <div class="form-group">
-                <button onclick="handleLogin()" class="btn btn-primary">Login</button>
-            </div>
-            <div class="social-login">
-                <p>Or login with:</p>
-                <button onclick="handleGoogleLogin()" class="btn btn-social btn-google">
-                    <i class="fab fa-google"></i> Google
-                </button>
-                <button onclick="handleGithubLogin()" class="btn btn-social btn-github">
-                    <i class="fab fa-github"></i> GitHub
-                </button>
-                <button onclick="handleDiscordLogin()" class="btn btn-social btn-discord">
-                    <i class="fab fa-discord"></i> Discord
-                </button>
-            </div>
-            <div class="guest-login">
-                <p>Or</p>
-                <button onclick="handleGuest()" class="btn btn-outline-secondary">Continue as Guest</button>
-            </div>
-            <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register</a></p>
         </div>
 
         <!-- Register Form -->
         <div id="registerForm" class="auth-form" style="display: none;">
-            <h2>Register</h2>
-            <div class="form-group">
-                <input type="email" id="registerEmail" class="form-control" placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <input type="password" id="registerPassword" class="form-control" placeholder="Password" required>
-            </div>
-            <div class="form-group">
-                <input type="text" id="username" class="form-control" placeholder="Username" required>
-            </div>
-            <div class="form-group">
-                <label>Favorite Genres</label>
-                <div class="genres-grid">
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Action">
-                        <label>Action</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Adventure">
-                        <label>Adventure</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Animation">
-                        <label>Animation</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Comedy">
-                        <label>Comedy</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Crime">
-                        <label>Crime</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Documentary">
-                        <label>Documentary</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Drama">
-                        <label>Drama</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Family">
-                        <label>Family</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Fantasy">
-                        <label>Fantasy</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="History">
-                        <label>History</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Horror">
-                        <label>Horror</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Music">
-                        <label>Music</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Mystery">
-                        <label>Mystery</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Romance">
-                        <label>Romance</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Sci-Fi">
-                        <label>Sci-Fi</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Thriller">
-                        <label>Thriller</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="War">
-                        <label>War</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="genre" value="Western">
-                        <label>Western</label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <button onclick="handleRegister()" class="btn btn-primary">Register</button>
-            </div>
-            <div class="social-login">
-                <p>Or register with:</p>
-                <button onclick="handleGoogleLogin()" class="btn btn-social btn-google">
-                    <i class="fab fa-google"></i> Google
-                </button>
-                <button onclick="handleGithubLogin()" class="btn btn-social btn-github">
-                    <i class="fab fa-github"></i> GitHub
-                </button>
-                <button onclick="handleDiscordLogin()" class="btn btn-social btn-discord">
-                    <i class="fab fa-discord"></i> Discord
-                </button>
-            </div>
-            <p class="mt-3">Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+            <!-- Registration is disabled -->
         </div>
 
         <!-- User Info Section -->

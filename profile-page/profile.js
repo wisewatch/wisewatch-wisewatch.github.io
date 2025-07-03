@@ -158,3 +158,66 @@ function addToWatchHistory(movie) {
     // Save updated profile
     localStorage.setItem('userProfile', JSON.stringify(userProfile));
 }
+
+// --- Rate Movies Feature ---
+const rateMoviesList = [
+  { id: 1, title: 'Inception', poster: 'https://image.tmdb.org/t/p/w300//qmDpIHrmpJINaRKAfWQfftjCdyi.jpg' },
+  { id: 2, title: 'The Matrix', poster: 'https://image.tmdb.org/t/p/w300//f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg' },
+  { id: 3, title: 'Interstellar', poster: 'https://image.tmdb.org/t/p/w300//gEU2QniE6E77NI6lCU6MxlNBvIx.jpg' },
+  { id: 4, title: 'The Dark Knight', poster: 'https://image.tmdb.org/t/p/w300//qJ2tW6WMUDux911r6m7haRef0WH.jpg' },
+  { id: 5, title: 'Pulp Fiction', poster: 'https://image.tmdb.org/t/p/w300//d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg' }
+];
+let currentRateIndex = 0;
+let movieRatings = {};
+
+function openRateMoviesModal() {
+  // Load previous ratings if any
+  const saved = localStorage.getItem('movieRatings_user1');
+  movieRatings = saved ? JSON.parse(saved) : {};
+  currentRateIndex = 0;
+  showRateMovie();
+  const modal = new bootstrap.Modal(document.getElementById('rateMoviesModal'));
+  modal.show();
+}
+
+function showRateMovie() {
+  const body = document.getElementById('rateMoviesBody');
+  if (currentRateIndex >= rateMoviesList.length) {
+    body.innerHTML = '<div class="text-center">All done! Thank you for rating.</div>';
+    localStorage.setItem('movieRatings_user1', JSON.stringify(movieRatings));
+    return;
+  }
+  const movie = rateMoviesList[currentRateIndex];
+  body.innerHTML = `
+    <div class="text-center">
+      <img src="${movie.poster}" alt="${movie.title}" class="img-fluid mb-2" style="max-height:220px;">
+      <h5>${movie.title}</h5>
+      <div class="mb-2">Have you seen this movie?</div>
+      <div class="d-flex justify-content-center flex-wrap mb-2">
+        <button class="btn btn-success m-1" onclick="rateMovie('liked')">Liked it</button>
+        <button class="btn btn-warning m-1" onclick="rateMovie('meh')">Meh</button>
+        <button class="btn btn-danger m-1" onclick="rateMovie('disliked')">Didn't like it</button>
+        <button class="btn btn-secondary m-1" onclick="rateMovie('skip')">Skip</button>
+      </div>
+      <div class="mb-2">Haven't seen it?</div>
+      <div class="d-flex justify-content-center flex-wrap">
+        <button class="btn btn-info m-1" onclick="rateMovie('interested')">Interested</button>
+        <button class="btn btn-outline-secondary m-1" onclick="rateMovie('not_interested')">Not interested</button>
+      </div>
+    </div>
+  `;
+}
+
+function rateMovie(rating) {
+  const movie = rateMoviesList[currentRateIndex];
+  movieRatings[movie.id] = rating;
+  currentRateIndex++;
+  showRateMovie();
+}
+
+function eraseAllMovieRatings() {
+  if (confirm('Are you sure you want to erase all your movie ratings? This cannot be undone.')) {
+    localStorage.removeItem('movieRatings_user1');
+    alert('All movie ratings have been erased.');
+  }
+}
