@@ -23,7 +23,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012177256773101"
      crossorigin="anonymous"></script>
 </head>
-<body>
+<body>    
 
     <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()">
@@ -44,7 +44,7 @@
             <a href="trending.html" class="btn btn-outline-primary">Trending</a>
             <a href="show-finder.html" class="btn btn-outline-primary">Show Finder</a>
             <a href="movie-finder.html" class="btn btn-outline-primary">Movie Finder</a>
-            <a href="profile-page/profile.html" class="btn btn-outline-primary">Profile Page</a>
+            <a href="profile-page/profile.html" class="btn btn-outline-primary">Settings/Profile</a>
             <a href="discover.html" class="btn btn-outline-primary">WiseWatches</a>
             </div>
             <!-- Small screens: dropdown nav -->
@@ -56,7 +56,7 @@
                 <li><a class="dropdown-item" href="trending.html">Trending</a></li>
                 <li><a class="dropdown-item" href="show-finder.html">Show Finder</a></li>
                 <li><a class="dropdown-item" href="movie-finder.html">Movie Finder</a></li>
-                <li><a class="dropdown-item" href="profile-page/profile.html">Profile Page</a></li>
+                <li><a class="dropdown-item" href="profile-page/profile.html">Settings/Profile</a></li>
                 <li><a class="dropdown-item" href="discover.html">WiseWatches</a></li>
             </ul>
             </div>
@@ -87,12 +87,14 @@
             <button onclick="location.href='movie-finder.html'" class="choice-btn">Movie Finder</button>
             <button onclick="location.href='show-finder.html'" class="choice-btn">Show Finder</button>
             <button onclick="location.href='trending.html'" class="choice-btn">Trending</button>
-            <button onclick="location.href='profile-page/profile.html'" class="choice-btn">View Profile</button>
+            <button onclick="location.href='profile-page/profile.html'" class="choice-btn">Settings/Profile</button>
         </div><br>
         <p>Visitors</p>
         <!--<a href='https://www.free-counters.org/'>powered by Free-Counters.org</a>--> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=34deb05a75fbf7dd87d6fa7c6259ca9b4aa66eed'></script>
         <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349529/t/5"></script>
         <br><a href="about.html" target="_self">About Us</a>
+
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -217,9 +219,15 @@
         // Logout function
         async function handleLogout() {
             try {
-                await supabaseClient.auth.signOut();
-                localStorage.clear();
-                window.location.href = 'login.html';
+                let confirmLogout = window.confirm("Are you sure you want to logout, this will delete all your account info and data if you are in guest.")
+                if(confirmLogout){
+                    await supabaseClient.auth.signOut();
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }else{
+                    console.log("user cancled logout")
+                }
+                
             } catch (error) {
                 console.error('Logout error:', error);
                 // Force logout even if there's an error
@@ -249,5 +257,7 @@
         }
         setWelcomeMessage();
     </script>
+
+
 </body>
 </html> 

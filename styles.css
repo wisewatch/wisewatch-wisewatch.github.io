@@ -1230,3 +1230,17 @@ h1 {
         padding: 10px;
     }
 }
+
+#movieLikeSearch{
+    border-radius: .5rem;
+}
+
+#showLikeSearch{
+    border-radius: .5rem;
+}
+
+#searchLike{
+    border-radius: .5rem;
+    margin: auto;
+    margin-left: 1rem;
+}

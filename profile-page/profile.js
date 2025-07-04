@@ -6,6 +6,8 @@ let userProfile = null;
 document.addEventListener('DOMContentLoaded', () => {
     loadUserProfile();
     setupAvatarUpload();
+    renderLikedMovies();
+    renderLikedShows();
 });
 
 function loadUserProfile() {
@@ -215,9 +217,145 @@ function rateMovie(rating) {
   showRateMovie();
 }
 
-function eraseAllMovieRatings() {
-  if (confirm('Are you sure you want to erase all your movie ratings? This cannot be undone.')) {
+function eraseAllData() {
+  if (confirm('Are you sure you want to erase all your data? This will delete:\n\n• All movie and show ratings\n• Watchlist\n• Watch history\n• Username and email\n• Avatar\n• Favorite genres\n\nThis cannot be undone.')) {
+    // Remove all user-related data from localStorage
     localStorage.removeItem('movieRatings_user1');
-    alert('All movie ratings have been erased.');
+    localStorage.removeItem('showRatings_user1');
+    localStorage.removeItem('userWatchlist_user1');
+    localStorage.removeItem('userWatchHistory_user1');
+    localStorage.removeItem('userProfile_user1');
+    localStorage.removeItem('userServices_user1');
+    
+    // Reset the current page
+    document.getElementById('username').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('profileImage').src = '../images/default-avatar.png';
+    
+    // Clear selected genres
+    const genreButtons = document.querySelectorAll('.genre-btn');
+    genreButtons.forEach(button => {
+      button.classList.remove('selected');
+    });
+    
+    // Reset userProfile object
+    userProfile = {
+      favoriteGenres: [],
+      watchHistory: []
+    };
+    
+    alert('All data has been erased successfully.');
   }
+}
+
+// --- Add Liked Movies/Shows Section ---
+const TMDB_API_KEY = '1e6c49b4cc57e66a33167920ed6ce4cb';
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+
+function searchMovieLike() {
+    const query = document.getElementById('movieLikeSearch').value.trim();
+    const resultsDiv = document.getElementById('movieLikeResults');
+    if (!query) { resultsDiv.innerHTML = ''; return; }
+    resultsDiv.innerHTML = 'Searching...';
+    fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.results || data.results.length === 0) {
+                resultsDiv.innerHTML = '<div class="text-muted">No movies found.</div>';
+                return;
+            }
+            resultsDiv.innerHTML = data.results.slice(0, 5).map(movie =>
+                `<div class="d-flex align-items-center mb-2">
+                    <img src="${movie.poster_path ? 'https://image.tmdb.org/t/p/w92/' + movie.poster_path : '../images/logo.png'}" style="width:40px;height:60px;object-fit:cover;border-radius:4px;margin-right:10px;">
+                    <span class="flex-grow-1">${movie.title} (${movie.release_date ? movie.release_date.slice(0,4) : 'N/A'})</span>
+                    <button class="btn btn-sm btn-success ms-2" onclick="addLikedMovie(${movie.id}, '${movie.title.replace(/'/g, "\'")}', '${movie.release_date ? movie.release_date.slice(0,4) : ''}', '${movie.poster_path || ''}')">Add</button>
+                </div>`
+            ).join('');
+        });
+}
+
+function addLikedMovie(id, title, year, poster) {
+    let ratings = JSON.parse(localStorage.getItem('movieRatings_user1') || '{}');
+    ratings[id] = 'liked';
+    localStorage.setItem('movieRatings_user1', JSON.stringify(ratings));
+    renderLikedMovies();
+}
+
+function renderLikedMovies() {
+    let ratings = JSON.parse(localStorage.getItem('movieRatings_user1') || '{}');
+    const list = document.getElementById('likedMoviesList');
+    list.innerHTML = '';
+    Object.keys(ratings).filter(id => ratings[id] === 'liked').forEach(id => {
+        fetch(`${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}`)
+            .then(res => res.json())
+            .then(movie => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex align-items-center';
+                li.innerHTML = `<img src="${movie.poster_path ? 'https://image.tmdb.org/t/p/w92/' + movie.poster_path : '../images/logo.png'}" style="width:32px;height:48px;object-fit:cover;border-radius:4px;margin-right:10px;">
+                    <span class="flex-grow-1">${movie.title} (${movie.release_date ? movie.release_date.slice(0,4) : 'N/A'})</span>
+                    <button class="btn btn-sm btn-danger ms-2" onclick="removeLikedMovie(${movie.id})">Remove</button>`;
+                list.appendChild(li);
+            });
+    });
+}
+
+function removeLikedMovie(id) {
+    let ratings = JSON.parse(localStorage.getItem('movieRatings_user1') || '{}');
+    delete ratings[id];
+    localStorage.setItem('movieRatings_user1', JSON.stringify(ratings));
+    renderLikedMovies();
+}
+
+function searchShowLike() {
+    const query = document.getElementById('showLikeSearch').value.trim();
+    const resultsDiv = document.getElementById('showLikeResults');
+    if (!query) { resultsDiv.innerHTML = ''; return; }
+    resultsDiv.innerHTML = 'Searching...';
+    fetch(`${TMDB_BASE_URL}/search/tv?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.results || data.results.length === 0) {
+                resultsDiv.innerHTML = '<div class="text-muted">No shows found.</div>';
+                return;
+            }
+            resultsDiv.innerHTML = data.results.slice(0, 5).map(show =>
+                `<div class="d-flex align-items-center mb-2">
+                    <img src="${show.poster_path ? 'https://image.tmdb.org/t/p/w92/' + show.poster_path : '../images/logo.png'}" style="width:40px;height:60px;object-fit:cover;border-radius:4px;margin-right:10px;">
+                    <span class="flex-grow-1">${show.name} (${show.first_air_date ? show.first_air_date.slice(0,4) : 'N/A'})</span>
+                    <button class="btn btn-sm btn-success ms-2" onclick="addLikedShow(${show.id}, '${show.name.replace(/'/g, "\'")}', '${show.first_air_date ? show.first_air_date.slice(0,4) : ''}', '${show.poster_path || ''}')">Add</button>
+                </div>`
+            ).join('');
+        });
+}
+
+function addLikedShow(id, name, year, poster) {
+    let ratings = JSON.parse(localStorage.getItem('showRatings_user1') || '{}');
+    ratings[id] = 'liked';
+    localStorage.setItem('showRatings_user1', JSON.stringify(ratings));
+    renderLikedShows();
+}
+
+function renderLikedShows() {
+    let ratings = JSON.parse(localStorage.getItem('showRatings_user1') || '{}');
+    const list = document.getElementById('likedShowsList');
+    list.innerHTML = '';
+    Object.keys(ratings).filter(id => ratings[id] === 'liked').forEach(id => {
+        fetch(`${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}`)
+            .then(res => res.json())
+            .then(show => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex align-items-center';
+                li.innerHTML = `<img src="${show.poster_path ? 'https://image.tmdb.org/t/p/w92/' + show.poster_path : '../images/logo.png'}" style="width:32px;height:48px;object-fit:cover;border-radius:4px;margin-right:10px;">
+                    <span class="flex-grow-1">${show.name} (${show.first_air_date ? show.first_air_date.slice(0,4) : 'N/A'})</span>
+                    <button class="btn btn-sm btn-danger ms-2" onclick="removeLikedShow(${show.id})">Remove</button>`;
+                list.appendChild(li);
+            });
+    });
+}
+
+function removeLikedShow(id) {
+    let ratings = JSON.parse(localStorage.getItem('showRatings_user1') || '{}');
+    delete ratings[id];
+    localStorage.setItem('showRatings_user1', JSON.stringify(ratings));
+    renderLikedShows();
 }

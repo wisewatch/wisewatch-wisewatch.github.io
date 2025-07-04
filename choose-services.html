@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Streaming Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/logo.png">
+    <style>
+      .services-grid { display: flex; flex-wrap: wrap; gap: 1rem; max-height: 60vh; overflow-y: auto; }
+      .service-item { flex: 1 1 180px; min-width: 160px; background: #f8f9fa; border-radius: 8px; padding: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+      .service-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid #eee; padding: 2px; }
+      .search-bar { max-width: 400px; margin: 0 auto 1.5rem auto; }
+      .popular-section { margin-bottom: 2rem; }
+      .popular-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem; }
+      @media (max-width: 600px) { .service-item { min-width: 120px; } }
+    </style>
+</head>
+<body>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <div class="toggle-icon sun">
+        <i class="fas fa-sun"></i>
+    </div>
+    <div class="toggle-icon moon">
+        <i class="fas fa-moon"></i>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="show-details.js"></script>
+  <script>
+      // Theme toggle functionality
+      function toggleTheme() {
+          const body = document.body;
+          const currentTheme = body.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          
+          body.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+      }
+
+      // Check for saved theme preference
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+          document.body.setAttribute('data-theme', savedTheme);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.body.setAttribute('data-theme', 'dark');
+      }
+  </script>
+  <div class="container py-4">
+      <button onclick="goBack()" class="btn btn-outline-secondary mb-3">&larr; Back</button>
+      <h1 class="mb-4">Choose Your Streaming Services</h1>
+      <input type="text" id="serviceSearch" class="form-control search-bar" placeholder="Search services..." oninput="renderServices()">
+      <form id="servicesForm">
+          <div class="popular-section">
+              <div class="popular-title">Most Popular</div>
+              <div class="services-grid" id="popularServicesGrid"></div>
+          </div>
+          <div class="popular-title">All Services</div>
+          <div class="services-grid mb-4" id="allServicesGrid"></div>
+          <button type="button" class="btn btn-primary" onclick="saveServices()">Save</button>
+      </form>
+      <div class="mt-3 text-muted small">You can always change this in Settings. Your choices help us recommend where to watch!</div>
+  </div>
+  <script>
+    // Popular services with logo URLs (using WorldVectorLogo SVGs)
+    const POPULAR_SERVICES = [
+      { name: 'Netflix', logo: 'https://cdn.worldvectorlogo.com/logos/netflix-3.svg' },
+      { name: 'Hulu', logo: 'https://cdn.worldvectorlogo.com/logos/hulu-2.svg' },
+      { name: 'Disney+', logo: 'https://cdn.worldvectorlogo.com/logos/disney-2.svg' },
+      { name: 'Prime Video', logo: 'https://cdn.worldvectorlogo.com/logos/amazon-prime-video-1.svg' },
+      { name: 'Max', logo: 'https://cdn.worldvectorlogo.com/logos/max-8.svg' },
+      { name: 'Apple TV+', logo: 'https://cdn.worldvectorlogo.com/logos/apple-tv-plus-logo.svg' },
+      { name: 'Paramount+', logo: 'https://cdn.worldvectorlogo.com/logos/paramount-3.svg' },
+      { name: 'Peacock', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/NBCUniversal_Peacock_Logo.svg/500px-NBCUniversal_Peacock_Logo.svg.png' },
+      { name: 'Crunchyroll', logo: 'https://cdn.worldvectorlogo.com/logos/crunchyroll-logo.svg' },
+      { name: 'Pluto TV', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Pluto_TV_logo_2024.svg/500px-Pluto_TV_logo_2024.svg.png' },
+      { name: 'Tubi', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Tubi_logo_2024_black.svg/500px-Tubi_logo_2024_black.svg.png' },
+      { name: 'Freevee', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Freevee_logo_background_purple.svg/500px-Freevee_logo_background_purple.svg.png' },
+      { name: 'Sling TV', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sling_TV_logo.svg/500px-Sling_TV_logo.svg.png' },
+      { name: 'YouTube TV', logo: 'https://cdn.worldvectorlogo.com/logos/youtube-tv-1.svg' },
+      { name: 'Starz', logo: 'https://cdn.worldvectorlogo.com/logos/starz.svg' }
+    ];
+    // All services (add more as needed, can be string or { name, logo })
+    const ALL_SERVICES = [
+      ...POPULAR_SERVICES,
+      { name: 'Showtime', logo: 'https://cdn.worldvectorlogo.com/logos/showtime-2.svg' },
+      { name: 'AMC+', logo: 'https://cdn.worldvectorlogo.com/logos/amc.svg' },
+      { name: 'Hallmark Movies Now', logo: 'https://cdn.worldvectorlogo.com/logos/hallmark-4.svg' },
+      { name: 'PBS', logo: 'https://cdn.worldvectorlogo.com/logos/pbs-3.svg' },
+      { name: 'PBS Kids', logo: 'https://cdn.worldvectorlogo.com/logos/pbs-kids-logo-2.svg' },
+      { name: 'Rakuten Viki', logo: 'https://cdn.worldvectorlogo.com/logos/rakuten-viki-01.svg' },
+      { name: 'Funimation', logo: 'https://cdn.worldvectorlogo.com/logos/funimation-2016.svg' },
+      { name: 'Discovery+', logo: 'https://cdn.worldvectorlogo.com/logos/discovery-channel-1.svg' },
+      { name: 'Tencent Video', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/2/2e/Tencent_Video.svg/380px-Tencent_Video.svg.png' },
+      { name: 'Viaplay', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/fc/Viaplay_logo.svg/500px-Viaplay_logo.svg.png' },
+      { name: 'iQIYI', logo: 'https://flixpatrol.com/runtime/cache/files/companies/i/w350/iqiyi.webp' },
+      { name: 'ESPN', logo: 'https://cdn.worldvectorlogo.com/logos/espn.svg' },
+      { name: 'uSonyLiv', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/SonyLIV_2020.png/330px-SonyLIV_2020.png' },
+      { name: 'Adult Swim', logo: 'https://cdn.worldvectorlogo.com/logos/adult-swim-2003-logo.svg' },
+      { name: 'CBS', logo: 'https://cdn.worldvectorlogo.com/logos/cbs-1.svg' },
+      { name: 'Nickelodeon', logo: 'https://cdn.worldvectorlogo.com/logos/nickelodeon-5.svg' },
+      { name: 'Fox', logo: 'https://cdn.worldvectorlogo.com/logos/fox-3.svg' },
+      { name: 'Bravo', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Bravo_2024.svg/500px-Bravo_2024.svg.png' },
+      { name: 'Bet+', logo: 'https://cdn.worldvectorlogo.com/logos/bet-network.svg' },
+      { name: 'A&E', logo: 'https://cdn.worldvectorlogo.com/logos/a-e.svg' },
+      { name: 'TBS', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/TBS_2020.svg/500px-TBS_2020.svg.png' },
+      { name: 'TNT', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/TNT_%28TV_Channel%29.svg/500px-TNT_%28TV_Channel%29.svg.png' },
+      { name: 'tru TV', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/TruTV_2014.svg/480px-TruTV_2014.svg.png' },
+      { name: 'Plex', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Plex_logo_2022.svg/500px-Plex_logo_2022.svg.png' },
+      { name: 'Spectrum On Demand', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Spectrum_Logo.svg/500px-Spectrum_Logo.svg.png' },
+      { name: 'ABC', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/ABC_News_logo_2021.svg/500px-ABC_News_logo_2021.svg.png' },
+      { name: 'Acorn TV', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Acorn_TV_logo_2024.svg/500px-Acorn_TV_logo_2024.svg.png' },
+      { name: 'Angel Studios', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Angel_Studios_logo.svg/500px-Angel_Studios_logo.svg.png' },
+      { name: 'Britbox', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e8/BritBox.svg/500px-BritBox.svg.png' },
+      { name: 'Cartoon Network', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/500px-Cartoon_Network_2010_logo.svg.png' },
+      { name: 'Crackle', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Crackle_%282019%29.svg/500px-Crackle_%282019%29.svg.png' },
+      { name: 'CW', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/The_CW_2024.svg/500px-The_CW_2024.svg.png' },
+      { name: 'E! Online', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/E%21_Logo_Flat_2012.svg/120px-E%21_Logo_Flat_2012.svg.png' },
+      { name: 'Fandango at Home', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Fandango_2014.svg/330px-Fandango_2014.svg.png' },
+      { name: 'Fandor', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Fandor_logo.svg/500px-Fandor_logo.svg.png' },
+      { name: 'Food Network', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Food_Network_logo.svg/400px-Food_Network_logo.svg.png' },
+      { name: 'Freeform', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Freeform_2022_%282%29.svg/500px-Freeform_2022_%282%29.svg.png' },
+      { name: 'FYI', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/FYI%2C_logo.svg/500px-FYI%2C_logo.svg.png' },
+      { name: 'History Channel', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/History_%282021%29.svg/330px-History_%282021%29.svg.png' },
+      { name: 'Kocowa', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Kocowa_logo_01.png/500px-Kocowa_logo_01.png' },
+      { name: 'Lifetime', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Logo_Lifetime_2020.svg/500px-Logo_Lifetime_2020.svg.png' },
+      { name: 'MGM+', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/MGM%2B_logo.svg/500px-MGM%2B_logo.svg.png' },
+      { name: 'Mubi', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Mubi_logo.svg/500px-Mubi_logo.svg.png' },
+      { name: 'National Geographic', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Natgeologo.svg/500px-Natgeologo.svg.png' },
+      { name: 'NBC', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/NBC_logo_2022_%28vertical%29.svg/330px-NBC_logo_2022_%28vertical%29.svg.png' },
+      { name: 'Oxygen', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Oxygen_TV_%282017_Logo%29.svg/400px-Oxygen_TV_%282017_Logo%29.svg.png' },
+      { name: 'Pureflix', logo: 'https://upload.wikimedia.org/wikipedia/en/c/cb/Great_American_Pure_Flix_logo.jpg' },
+      { name: 'Roku Channel', logo: 'https://cdn.worldvectorlogo.com/logos/roku-1.svg' },
+      { name: 'Shudder', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Shudder_2017.svg/500px-Shudder_2017.svg.png' },
+      { name: 'SyFy', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/SYFY.svg/500px-SYFY.svg.png' },
+      { name: 'TBS', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/TBS_2020.svg/500px-TBS_2020.svg.png' },
+      { name: 'Telemundo', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/500px-Telemundo_logo_2018.svg.png' },
+      { name: 'The Criterion Channel', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/The_Criterion_Collection_Logo.svg/260px-The_Criterion_Collection_Logo.svg.png' },
+      { name: 'USA Network', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/USA_Network_logo_%282016%29.svg/500px-USA_Network_logo_%282016%29.svg.png' },
+      { name: 'VH1', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/VH1_logo.svg/500px-VH1_logo.svg.png' },
+      { name: 'WE tv', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/We_TV_logo_2014.svg/500px-We_TV_logo_2014.svg.png' },
+      { name: 'CuriosityStream', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/CuriosityStreamBlack.svg/500px-CuriosityStreamBlack.svg.png' },
+
+      // ... (add more as needed)
+    ];
+    // Map of service name to logo (for all services)
+    const SERVICE_LOGOS = {};
+    ALL_SERVICES.forEach(s => {
+      if (typeof s === 'string') return;
+      SERVICE_LOGOS[s.name] = s.logo || '';
+    });
+    POPULAR_SERVICES.forEach(s => {
+      SERVICE_LOGOS[s.name] = s.logo;
+    });
+    function renderServices() {
+      const search = document.getElementById('serviceSearch').value.trim().toLowerCase();
+      // Load previous selection
+      const saved = localStorage.getItem('userServices_user1');
+      const selected = saved ? JSON.parse(saved) : [];
+      
+      if (search) {
+        // When searching, show all matching services in one unified list
+        const popGrid = document.getElementById('popularServicesGrid');
+        popGrid.innerHTML = '';
+        const allGrid = document.getElementById('allServicesGrid');
+        allGrid.innerHTML = '';
+        
+        // Collect all matching services
+        const matchingServices = [];
+        
+        // Add matching popular services
+        POPULAR_SERVICES.forEach(service => {
+          if (service.name.toLowerCase().includes(search)) {
+            matchingServices.push({ ...service, isPopular: true });
+          }
+        });
+        
+        // Add matching non-popular services
+        ALL_SERVICES.forEach(service => {
+          const svc = typeof service === 'string' ? { name: service } : service;
+          if (POPULAR_SERVICES.some(s => s.name === svc.name)) return; // skip popular (already added)
+          if (svc.name.toLowerCase().includes(search)) {
+            matchingServices.push({ ...svc, isPopular: false });
+          }
+        });
+        
+        // Render all matching services in the all services grid
+        matchingServices.forEach(service => {
+          const id = 'service_' + service.name.replace(/[^a-zA-Z0-9]/g, '');
+          const checked = selected.includes(service.name) ? 'checked' : '';
+          const logo = SERVICE_LOGOS[service.name] || 'images/services/default.png';
+          allGrid.innerHTML += `<div class="service-item">
+            <img src="${logo}" class="service-logo" alt="${service.name} logo" onerror="this.src='images/services/default.png'">
+            <input class="form-check-input" type="checkbox" value="${service.name}" id="${id}" ${checked}>
+            <label class="form-check-label" for="${id}">${service.name}</label>
+          </div>`;
+        });
+      } else {
+        // When not searching, show normal layout with popular and all services sections
+        // Render popular services
+        const popGrid = document.getElementById('popularServicesGrid');
+        popGrid.innerHTML = '';
+        POPULAR_SERVICES.forEach(service => {
+          const id = 'service_' + service.name.replace(/[^a-zA-Z0-9]/g, '');
+          const checked = selected.includes(service.name) ? 'checked' : '';
+          popGrid.innerHTML += `<div class="service-item">
+            <img src="${service.logo}" class="service-logo" alt="${service.name} logo" onerror="this.src='images/services/default.png'">
+            <input class="form-check-input" type="checkbox" value="${service.name}" id="${id}" ${checked}>
+            <label class="form-check-label" for="${id}">${service.name}</label>
+          </div>`;
+        });
+        
+        // Render all services (excluding popular)
+        const allGrid = document.getElementById('allServicesGrid');
+        allGrid.innerHTML = '';
+        ALL_SERVICES.forEach(service => {
+          const svc = typeof service === 'string' ? { name: service } : service;
+          if (POPULAR_SERVICES.some(s => s.name === svc.name)) return; // skip popular
+          const id = 'service_' + svc.name.replace(/[^a-zA-Z0-9]/g, '');
+          const checked = selected.includes(svc.name) ? 'checked' : '';
+          const logo = SERVICE_LOGOS[svc.name] || 'images/services/default.png';
+          allGrid.innerHTML += `<div class="service-item">
+            <img src="${logo}" class="service-logo" alt="${svc.name} logo" onerror="this.src='images/services/default.png'">
+            <input class="form-check-input" type="checkbox" value="${svc.name}" id="${id}" ${checked}>
+            <label class="form-check-label" for="${id}">${svc.name}</label>
+          </div>`;
+        });
+      }
+    }
+    function saveServices() {
+      const checked = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+      localStorage.setItem('userServices_user1', JSON.stringify(checked));
+      alert('Your services have been saved!');
+    }
+    function goBack() {
+      if (document.referrer && !document.referrer.includes('choose-services.html')) {
+        window.location = document.referrer;
+      } else {
+        window.location = 'index.html';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', renderServices);
+    </script>
+</body>
+</html> 

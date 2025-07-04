@@ -37,45 +37,24 @@
         <h1>Show Finder</h1>
         
         <div class="search-section">
-            <input type="text" id="showSearch" placeholder="Enter a TV show you like..." class="search-input">
-            <button onclick="searchSimilarShows()" class="choice-btn">Search For Show</button>
+            <div class="d-flex gap-2 align-items-center">
+                <input type="text" id="showSearch" placeholder="Enter a TV show you like..." class="search-input flex-grow-1">
+                <button onclick="searchSimilarShows()" class="choice-btn">Search For Show</button>
+                <button onclick="openFiltersModal()" class="btn btn-outline-secondary" title="Advanced Filters">
+                    <i class="fas fa-filter"></i>
+                </button>
+            </div>
         </div>
 
         <div class="divider">
             <span>OR</span>
         </div>
 
-        <div class="filters-section">
-            <h3>Advanced Filters</h3>
-            <div class="filter-group">
-                <label>Year Range:</label>
-                <div class="year-range">
-                    <input type="number" id="minYear" placeholder="From" min="1900" max="2024">
-                    <span>to</span>
-                    <input type="number" id="maxYear" placeholder="To" min="1900" max="2024">
-                </div>
-            </div>
-            <div class="filter-group">
-                <label>Rating:</label>
-                <select id="ratingFilter">
-                    <option value="">Any Rating</option>
-                    <option value="8">8+ Stars</option>
-                    <option value="7">7+ Stars</option>
-                    <option value="6">6+ Stars</option>
-                    <option value="5">5+ Stars</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Status:</label>
-                <select id="statusFilter">
-                    <option value="">Any Status</option>
-                    <option value="0">Returning Series</option>
-                    <option value="1">Ended</option>
-                    <option value="2">Canceled</option>
-                    <option value="3">In Production</option>
-                </select>
-            </div>
-        </div>
+        <!-- Hidden filter inputs for JavaScript compatibility -->
+        <input type="hidden" id="minYear">
+        <input type="hidden" id="maxYear">
+        <input type="hidden" id="ratingFilter">
+        <input type="hidden" id="statusFilter">
 
         <p>Select your favorite genres:</p>
         <div class="genre-list" id="genreList">
@@ -102,11 +81,11 @@
         <button id="loadMoreBtn" onclick="loadMoreShows()" class="choice-btn" style="display: none;">Load More</button>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012177256773101"
             crossorigin="anonymous"></script>
-        <!-- bottom page ad -->
+        <!-- horizantal bottom page add -->
         <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-3012177256773101"
-            data-ad-slot="3158157510"
+            data-ad-slot="7788219977"
             data-ad-format="auto"
             data-full-width-responsive="true"></ins>
         <script>
@@ -175,6 +154,76 @@
             color: var(--text-color);
         }
     </style>
+
+    <!-- Filters Modal -->
+    <div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtersModalLabel">Advanced Filters</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-group">
+                        <label>Year Range:</label>
+                        <div class="year-range">
+                            <input type="number" id="modalMinYear" placeholder="From" min="1900" max="2024">
+                            <span>to</span>
+                            <input type="number" id="modalMaxYear" placeholder="To" min="1900" max="2024">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label>Rating:</label>
+                        <select id="modalRatingFilter">
+                            <option value="">Any Rating</option>
+                            <option value="8">8+ Stars</option>
+                            <option value="7">7+ Stars</option>
+                            <option value="6">6+ Stars</option>
+                            <option value="5">5+ Stars</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="modalStatusFilter">
+                            <option value="">Any Status</option>
+                            <option value="0">Returning Series</option>
+                            <option value="1">Ended</option>
+                            <option value="2">Canceled</option>
+                            <option value="3">In Production</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openFiltersModal() {
+            // Load current filter values into modal
+            document.getElementById('modalMinYear').value = document.getElementById('minYear')?.value || '';
+            document.getElementById('modalMaxYear').value = document.getElementById('maxYear')?.value || '';
+            document.getElementById('modalRatingFilter').value = document.getElementById('ratingFilter')?.value || '';
+            document.getElementById('modalStatusFilter').value = document.getElementById('statusFilter')?.value || '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('filtersModal'));
+            modal.show();
+        }
+
+        function applyFilters() {
+            // Apply filter values from modal to hidden inputs
+            document.getElementById('minYear').value = document.getElementById('modalMinYear').value;
+            document.getElementById('maxYear').value = document.getElementById('modalMaxYear').value;
+            document.getElementById('ratingFilter').value = document.getElementById('modalRatingFilter').value;
+            document.getElementById('statusFilter').value = document.getElementById('modalStatusFilter').value;
+
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('filtersModal')).hide();
+        }
+    </script>
 
 </body>
 </html> 
