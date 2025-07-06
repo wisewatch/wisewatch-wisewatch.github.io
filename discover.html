@@ -41,6 +41,149 @@
         .modal-content {
             background: var(--card-bg, #fff);
         }
+        .result-item {
+            background: var(--card-bg, #fff);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: row;
+        }
+        .movie-content, .show-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .movie-header, .show-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .movie-header h3, .show-header h3 {
+            margin: 0;
+            color: var(--text-color, #222);
+        }
+        .trailer-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            background: var(--primary-color, #007bff);
+            color: white;
+            font-size: 0.9em;
+        }
+        .trailer-btn:hover {
+            opacity: 0.9;
+        }
+        .trailer-icon {
+            font-size: 0.8em;
+        }
+        .dropdown-section {
+            margin: 15px 0;
+        }
+        .dropdown-btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color, #ccc);
+            background: var(--input-bg, #fff);
+            color: var(--text-color, #222);
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid var(--border-color, #ccc);
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            background: var(--input-bg, #fff);
+        }
+        .dropdown-arrow {
+            font-size: 0.8em;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: var(--primary-color, #007bff);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        .choice-btn:hover {
+            opacity: 0.9;
+        }
+        .result-item img {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .streaming-providers {
+            margin-top: 10px;
+        }
+        .provider-group {
+            margin-bottom: 15px;
+        }
+        .provider-group h4 {
+            margin-bottom: 8px;
+            color: var(--text-color, #222);
+            font-size: 1em;
+        }
+        .provider-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .provider-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 8px;
+            background: var(--card-bg, #f8f9fa);
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .provider-item img {
+            width: 20px !important;
+            height: 20px !important;
+            object-fit: contain;
+            max-width: 14px !important;
+            max-height: 14px !important;
+        }
+        @media (max-width: 768px) {
+            .result-item {
+                flex-direction: column;
+            }
+            .result-item img {
+                width: 100px;
+                height: 150px;
+            }
+            .movie-header, .show-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -97,6 +240,7 @@
         <input type="hidden" id="ratingFilter">
         <input type="hidden" id="statusFilter">
         <input type="hidden" id="ageRatingFilter">
+        <input type="hidden" id="servicesFilter">
         <div id="discoverMoviesSection">
           <h2 class="mb-3">Recommended Movies</h2>
           <div id="discoverMovies" class="row g-4 justify-content-center mb-5"></div>
@@ -124,6 +268,17 @@
         showsTab.classList.add('active');
         moviesSection.style.display = 'none';
         showsSection.style.display = '';
+      }
+    }
+    
+    // Test function to manually open chatbot
+    function testChatbot() {
+      const modal = document.getElementById('aiChatbotModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        console.log('Chatbot modal opened manually');
+      } else {
+        console.error('Chatbot modal not found');
       }
     }
     </script>
@@ -175,6 +330,12 @@
                             <option value="3">In Production</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="modalServicesFilter" style="margin-right: 8px;">
+                            Show only content available on your streaming services
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -195,6 +356,7 @@
       document.getElementById('modalRatingFilter').value = document.getElementById('ratingFilter').value || '';
       document.getElementById('modalAgeRatingFilter').value = document.getElementById('ageRatingFilter').value || '';
       document.getElementById('modalStatusFilter').value = document.getElementById('statusFilter').value || '';
+      document.getElementById('modalServicesFilter').checked = document.getElementById('servicesFilter')?.value === 'true';
       const modal = new bootstrap.Modal(document.getElementById('filtersModal'));
       modal.show();
     }
@@ -204,9 +366,27 @@
       document.getElementById('ratingFilter').value = document.getElementById('modalRatingFilter').value;
       document.getElementById('ageRatingFilter').value = document.getElementById('modalAgeRatingFilter').value;
       document.getElementById('statusFilter').value = document.getElementById('modalStatusFilter').value;
+      document.getElementById('servicesFilter').value = document.getElementById('modalServicesFilter').checked;
       bootstrap.Modal.getInstance(document.getElementById('filtersModal')).hide();
       refreshRecommendations();
     }
     </script>
+    <!-- AI Chatbot Floating Button -->
+    <button id="aiChatbotBtn" style="position:fixed;bottom:32px;right:32px;z-index:9999;background:linear-gradient(90deg,#a259ff,#f24e1e);color:white;border:none;border-radius:50%;width:60px;height:60px;box-shadow:0 2px 8px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;pointer-events:auto;" onclick="console.log('Chat button clicked')">
+      <i class="fas fa-comments"></i>
+    </button>
+    <!-- AI Chatbot Modal -->
+    <div id="aiChatbotModal" style="display:none;position:fixed;bottom:110px;right:32px;z-index:10000;width:350px;max-width:95vw;background:var(--card-bg,#fff);border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,0.18);overflow:hidden;flex-direction:column;">
+      <div style="background:linear-gradient(90deg,#a259ff,#f24e1e);color:white;padding:16px 20px;font-weight:bold;display:flex;align-items:center;justify-content:space-between;">
+        <span><i class="fas fa-robot me-2"></i>WiseWatch AI (Expiremental)</span>
+        <button onclick="closeAIChatbot()" style="background:none;border:none;color:white;font-size:1.2em;cursor:pointer;">&times;</button>
+      </div>
+      <div id="aiChatbotMessages" style="padding:16px;height:320px;overflow-y:auto;background:var(--input-bg,#faf9fa);"></div>
+      <form id="aiChatbotForm" style="display:flex;gap:8px;padding:12px;background:var(--card-bg,#fff);border-top:1px solid #eee;">
+        <input id="aiChatbotInput" type="text" placeholder="Tell me what you want to watch..." autocomplete="off" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid #ddd;background:var(--input-bg,#faf9fa);color:var(--text-color,#222);font-size:1em;" required>
+        <button type="submit" style="background:linear-gradient(90deg,#a259ff,#f24e1e);color:white;border:none;border-radius:8px;padding:0 18px;font-size:1.1em;">Send</button>
+      </form>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </body>
 </html> 

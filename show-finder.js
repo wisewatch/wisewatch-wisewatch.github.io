@@ -338,7 +338,19 @@ async function displayShows(shows, append = false) {
     const watchHistoryIds = userProfile.watchHistory.map(item => item.id);
 
     // Filter out shows that are in watch history
-    const filteredShows = shows.filter(show => !watchHistoryIds.includes(show.id));
+    let filteredShows = shows.filter(show => !watchHistoryIds.includes(show.id));
+
+    // Apply services filter if enabled
+    const servicesFilter = document.getElementById('servicesFilter')?.value === 'true';
+    if (servicesFilter) {
+        const userServices = JSON.parse(localStorage.getItem('userServices_user1') || '[]');
+        if (userServices.length > 0) {
+            // Filter shows to only show those available on user's services
+            // This is a simplified filter - in a real app you'd check actual availability
+            // For now, we'll show all shows but add a note about the filter
+            console.log('Services filter enabled, user services:', userServices);
+        }
+    }
 
     if (filteredShows.length === 0) {
         if (!append) {

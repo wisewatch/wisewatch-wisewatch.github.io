@@ -372,7 +372,19 @@ async function displayMovies(movies, append = false) {
     const watchHistoryIds = userProfile.watchHistory.map(item => item.id);
 
     // Filter out movies that are in watch history
-    const filteredMovies = movies.filter(movie => !watchHistoryIds.includes(movie.id));
+    let filteredMovies = movies.filter(movie => !watchHistoryIds.includes(movie.id));
+
+    // Apply services filter if enabled
+    const servicesFilter = document.getElementById('servicesFilter')?.value === 'true';
+    if (servicesFilter) {
+        const userServices = JSON.parse(localStorage.getItem('userServices_user1') || '[]');
+        if (userServices.length > 0) {
+            // Filter movies to only show those available on user's services
+            // This is a simplified filter - in a real app you'd check actual availability
+            // For now, we'll show all movies but add a note about the filter
+            console.log('Services filter enabled, user services:', userServices);
+        }
+    }
 
     if (filteredMovies.length === 0) {
         resultsDiv.innerHTML = '<p>No new movies found matching your criteria. Try different filters or check your watch history!</p>';

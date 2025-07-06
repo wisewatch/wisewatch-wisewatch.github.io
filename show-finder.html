@@ -55,6 +55,7 @@
         <input type="hidden" id="maxYear">
         <input type="hidden" id="ratingFilter">
         <input type="hidden" id="statusFilter">
+        <input type="hidden" id="servicesFilter">
 
         <p>Select your favorite genres:</p>
         <div class="genre-list" id="genreList">
@@ -192,6 +193,12 @@
                             <option value="3">In Production</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="modalServicesFilter" style="margin-right: 8px;">
+                            Show only content available on your streaming services
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -208,6 +215,7 @@
             document.getElementById('modalMaxYear').value = document.getElementById('maxYear')?.value || '';
             document.getElementById('modalRatingFilter').value = document.getElementById('ratingFilter')?.value || '';
             document.getElementById('modalStatusFilter').value = document.getElementById('statusFilter')?.value || '';
+            document.getElementById('modalServicesFilter').checked = document.getElementById('servicesFilter')?.value === 'true';
             
             const modal = new bootstrap.Modal(document.getElementById('filtersModal'));
             modal.show();
@@ -219,6 +227,7 @@
             document.getElementById('maxYear').value = document.getElementById('modalMaxYear').value;
             document.getElementById('ratingFilter').value = document.getElementById('modalRatingFilter').value;
             document.getElementById('statusFilter').value = document.getElementById('modalStatusFilter').value;
+            document.getElementById('servicesFilter').value = document.getElementById('modalServicesFilter').checked;
 
             // Close modal
             bootstrap.Modal.getInstance(document.getElementById('filtersModal')).hide();

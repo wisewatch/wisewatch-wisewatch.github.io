@@ -70,6 +70,164 @@
             document.body.setAttribute('data-theme', 'dark');
         }
     </script>
+
+    <style>
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .watch-history-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .watch-history-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .watch-history-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .type-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .type-badge.movie {
+            background: #e50914;
+            color: white;
+        }
+        .type-badge.show {
+            background: #007bff;
+            color: white;
+        }
+        .watch-history-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .trailer-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            background: var(--primary-color);
+            color: white;
+        }
+        .watch-history-details {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+        }
+        .poster-image {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .no-poster {
+            width: 100%;
+            height: 300px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            color: var(--text-color);
+        }
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .genre-tag {
+            padding: 4px 8px;
+            background: var(--card-bg);
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .choice-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .choice-btn:hover {
+            opacity: 0.9;
+        }
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .rating-label {
+            font-weight: bold;
+        }
+        .rating-value {
+            color: var(--primary-color);
+        }
+        .age-rating {
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+        .overview-section, .genres-section {
+            margin-top: 15px;
+        }
+        .overview-section h3, .genres-section h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        .release-date {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+    </style>
     
 </body>
 </html> 
