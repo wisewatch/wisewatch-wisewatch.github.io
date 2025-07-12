@@ -37,7 +37,7 @@ function renderMovies(movies) {
   
   movies.forEach(async (movie) => {
     const col = document.createElement('div');
-    col.className = 'col-12 col-md-6 col-lg-4 mb-4';
+    col.className = 'col-12 mb-4';
     
     // Get additional movie information
     const certification = await getMovieCertification(movie.id);
@@ -187,7 +187,7 @@ function renderShows(shows) {
   
   shows.forEach(async (show) => {
     const col = document.createElement('div');
-    col.className = 'col-12 col-md-6 col-lg-4 mb-4';
+    col.className = 'col-12 mb-4';
     
     // Get additional show information
     const streamingInfo = await getStreamingInfo(show.id, 'tv');
