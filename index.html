@@ -127,15 +127,15 @@
         window.onload = function() {
             const currentUser = localStorage.getItem('currentUser');
             if (!currentUser) {
-                window.location.href = 'login.html';
-                return;
+                // Automatically sign in as guest if no user is found
+                localStorage.setItem('currentUser', 'Guest');
             }
 
             // Show user info
             const userInfo = document.getElementById('userInfo');
             const username = document.getElementById('username');
             userInfo.style.display = 'flex';
-            username.textContent = `Welcome, ${currentUser}`;
+            username.textContent = `Welcome, ${currentUser || 'Guest'}`;
         }
 
         // Logout function
@@ -216,8 +216,15 @@
 
         // Check if user is logged in
         async function checkAuth() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser === 'Guest') {
+                // Allow guest users to access the site
+                return;
+            }
+            
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
+                // Only redirect to login if not a guest user
                 window.location.href = 'login.html';
             }
         }

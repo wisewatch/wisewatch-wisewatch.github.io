@@ -217,8 +217,16 @@ function rateMovie(rating) {
   showRateMovie();
 }
 
+const deleteKeySound = new Audio('');
+
+function playKeyboardClickSound() {
+    const playKeyboardClick = document.getElementById('keyboardClickSound')
+    playKeyboardClick.play();
+}
+
 function eraseAllData() {
-  if (confirm('Are you sure you want to erase all your data? This will delete:\n\n• All movie and show ratings\n• Watchlist\n• Watch history\n• Username and email\n• Avatar\n• Favorite genres\n\nThis cannot be undone.')) {
+    playKeyboardClickSound();
+    if (confirm('Are you sure you want to erase all your data? This will delete:\n\n• All movie and show ratings\n• Watchlist\n• Watch history\n• Username and email\n• Avatar\n• Favorite genres\n\nThis cannot be undone.')) {
     // Remove all user-related data from localStorage
     localStorage.removeItem('movieRatings_user1');
     localStorage.removeItem('showRatings_user1');
@@ -226,26 +234,26 @@ function eraseAllData() {
     localStorage.removeItem('userWatchHistory_user1');
     localStorage.removeItem('userProfile_user1');
     localStorage.removeItem('userServices_user1');
-    
+
     // Reset the current page
     document.getElementById('username').value = '';
     document.getElementById('email').value = '';
     document.getElementById('profileImage').src = '../images/default-avatar.png';
-    
+
     // Clear selected genres
     const genreButtons = document.querySelectorAll('.genre-btn');
     genreButtons.forEach(button => {
-      button.classList.remove('selected');
+        button.classList.remove('selected');
     });
-    
+
     // Reset userProfile object
     userProfile = {
-      favoriteGenres: [],
-      watchHistory: []
+        favoriteGenres: [],
+        watchHistory: []
     };
-    
+
     alert('All data has been erased successfully.');
-  }
+    }
 }
 
 // --- Add Liked Movies/Shows Section ---
