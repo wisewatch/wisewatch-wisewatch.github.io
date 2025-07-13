@@ -1439,14 +1439,15 @@ html{
     scroll-behavior: smooth;
 }
 
+/* From Uiverse.io by Chris-immanuel-matthew */ 
 .button-container {
     display: flex;
     justify-content: center;
     gap: 20px; /* Adjust this value to increase or decrease space between buttons */
     padding: 20px;
-  }
+}
   
-  .brutalist-button {
+.brutalist-button {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1464,13 +1465,14 @@ html{
     height: 130px;
     width: 130px;
     cursor: pointer;
-  }
+}
   
-  .brutalist-button.openai {
-    background-color: #356854;
-  }
+.brutalist-button.openai {
+    background: #2A7B9B;
+    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 35%, rgba(68, 160, 168, 1) 51%, rgba(87, 199, 133, 1) 72%);
+}
   
-  .brutalist-button::before {
+.brutalist-button::before {
     content: "";
     position: absolute;
     left: 50%;
@@ -1481,31 +1483,32 @@ html{
     transform: translateX(-50%) scale(0);
     transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     z-index: 1;
-  }
+}
   
-  .brutalist-button.openai::before {
-    background-color: #316b58;
-  }
+.brutalist-button.openai::before {
+    background: #2A7B9B;
+    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 35%, rgba(68, 160, 168, 1) 51%, rgba(87, 199, 133, 1) 72%);
+}
   
-  .brutalist-button.claude::before {
+.brutalist-button.claude::before {
     background-color: #e3d19c;
-  }
-  
-  .brutalist-button:hover::before {
+}
+
+.brutalist-button:hover::before {
     transform: translateX(-50%) scale(1);
-  }
+}
   
-  .brutalist-button:hover {
+.brutalist-button:hover {
     transform: translate(-4px, -4px);
     box-shadow: 8px 8px 0px #000000;
-  }
+}
   
-  .brutalist-button:active {
+.brutalist-button:active {
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0px #000000;
-  }
+}
   
-  .openai-logo {
+.openai-logo {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1519,43 +1522,43 @@ html{
     border-radius: 50%;
     transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
+}
   
-  .openai-logo {
+.openai-logo {
     align-items: center;
     justify-content: center;
     background-color: #0f1715; /* OpenAI's green color */
     border-radius: 50%; /* This creates the circular background */
-  }
+}
   
-  .openai-icon {
+.openai-icon {
     width: 54px;
     height: 54px;
     fill: #ffffff; /* White color for the SVG */
     transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
+}
   
-  @keyframes spin {
+@keyframes spin {
     0% {
       transform: translate(-50%, -50%) rotate(0deg);
     }
     100% {
       transform: translate(-50%, -50%) rotate(360deg);
     }
-  }
+}
   
-  .brutalist-button:hover .openai-logo {
+.brutalist-button:hover .openai-logo {
     animation: spin 5s linear infinite;
     width: 50px;
     height: 50px;
     top: 28%;
-  }
+}
   
-  .brutalist-button:hover .openai-icon {
-    transform: scale(0.1);
-  }
+.brutalist-button:hover .openai-icon {
+    transform: scale(0.6);
+}
   
-  .button-text {
+.button-text {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1569,39 +1572,39 @@ html{
     bottom: 18px;
     left: 0;
     right: 0;
-  }
+}
   
-  .button-text span:first-child {
+.button-text span:first-child {
     font-size: 13px;
     font-weight: 500;
     margin-bottom: 2px;
-  }
+}
   
-  .button-text span:last-child {
+.button-text span:last-child {
     font-size: 16px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: #ffffff;
-  }
+}
   
-  .brutalist-button:hover .button-text {
+.brutalist-button:hover .button-text {
     opacity: 1;
     transform: translateY(0);
-  }
+}
   
-  .brutalist-button.openai:hover .button-text {
+.brutalist-button.openai:hover .button-text {
     color: #d3d3d3;
-  }
+}
   
-  .brutalist-button.openai:hover .button-text span:last-child {
+.brutalist-button.openai:hover .button-text span:last-child {
     color: #d6cbbf;
-  }
+}
   
-  @media (hover: hover) and (pointer: fine) {
+@media (hover: hover) and (pointer: fine) {
     .brutalist-button:hover {
       transform: translate(-4px, -4px);
       box-shadow: 8px 8px 0px #000000;
     }
-  }
+}
   
