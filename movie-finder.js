@@ -91,6 +91,12 @@ async function searchSimilarMovies() {
         document.getElementById('movieResults').innerHTML = `<p>Error: ${error.message}. Please try again later.</p>`;
         document.getElementById('searchedMovieInfo').innerHTML = '';
     }
+    console.log("Start");
+    setTimeout(() => {
+        window.open('#movieResults', '_self');
+        console.log("window opended");
+    }, 2000); // 2000 milliseconds = 2 seconds
+    console.log("End");
 }
 
 // Helper to display the searched movie info
@@ -188,6 +194,13 @@ async function findMovies() {
         console.error('Error:', error);
         document.getElementById('movieResults').innerHTML = `<p>Error: ${error.message}. Please try again later.</p>`;
     }
+
+    console.log("Start");
+    setTimeout(() => {
+        window.open('#movieResults', '_self');
+        console.log("window opended");
+    }, 2000); // 2000 milliseconds = 2 seconds
+    console.log("End");
 }
 
 async function loadMoreMovies() {

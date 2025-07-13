@@ -76,6 +76,12 @@ async function searchSimilarShows() {
         document.getElementById('showResults').innerHTML = `<p>Error: ${error.message}. Please try again later.</p>`;
         document.getElementById('searchedShowInfo').innerHTML = '';
     }
+    console.log("Start");
+    setTimeout(() => {
+        window.open('#showResults', '_self');
+        console.log("window opended");
+    }, 2000); // 2000 milliseconds = 2 seconds
+    console.log("End");
 }
 
 async function findShows() {
@@ -154,6 +160,12 @@ async function findShows() {
         console.error('Error:', error);
         document.getElementById('showResults').innerHTML = `<p>Error: ${error.message}. Please try again later.</p>`;
     }
+    console.log("Start");
+    setTimeout(() => {
+        window.open('#showResults', '_self');
+        console.log("window opended");
+    }, 2000); // 2000 milliseconds = 2 seconds
+    console.log("End");
 }
 
 async function loadMoreShows() {
