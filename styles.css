@@ -41,12 +41,12 @@ body {
 }
 
 .container {
-    max-width: 900px;
+    /*max-width: 900px;*/
     width: 90%;
     margin: 2rem auto;
     padding: 2rem;
-    padding-left: 4rem;
-    padding-right: 4rem;
+    padding-left: 7rem;
+    padding-right: 7rem;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -141,6 +141,7 @@ h1 {
 }
 
 .choice-btn {
+    visibility: collapse;
     padding: 1rem 2rem;
     font-size: 1.1rem;
     border: none;
@@ -153,6 +154,18 @@ h1 {
     overflow: hidden;
     background-color: var(--primary-color);
     border-color: var(--border-color);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    text-align: center;
+    margin-left: 10rem;
+    margin-right: 10rem;
 }
 
 .choice-btn:hover {
@@ -163,6 +176,60 @@ h1 {
 
 .choice-btn:active {
     transform: translateY(0);
+}
+
+.pcchoice-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #33b95b;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--primary-color);
+    border-color: var(--border-color);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.pcchoice-btn:hover {
+    background-color: #2da34e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(51, 185, 91, 0.2);
+}
+
+.pcchoice-btn:active {
+    transform: translateY(0);
+}
+
+.pcchoicebtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.pcchoicebtn button{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+    .pcchoice-btn{
+        visibility: collapse;
+    }
+    .choice-btn{
+        visibility: visible;
+    }
+    /*.pcnewtoyouuibtn{
+        visibility: collapse;
+    }
+    .newtoyouuibtn{
+        visibility: visible;
+    }*/
 }
 
 .back-btn {
@@ -1300,6 +1367,7 @@ h1 {
     border-radius: 10px;
     font-size: 1.25em;
     cursor: pointer;
+    margin-top: 7px;
   }
   
   .newtoyouuibtn span {
@@ -1332,6 +1400,51 @@ h1 {
   }
   
   .newtoyouuibtn:hover:after {
+    opacity: 1;
+  }
+
+  .pcnewtoyouuibtn {
+    position: relative;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(45deg, #0ce39a, #69007f, #fc0987);
+    padding: 14px 25px;
+    border-radius: 10px;
+    font-size: 1.25em;
+    cursor: pointer;
+    margin-top: 7px;
+  }
+  
+  .pcnewtoyouuibtn span {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .pcnewtoyouuibtn::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    background: #272727;
+    border-radius: 9px;
+    transition: 0.5s;
+  }
+  
+  .pcnewtoyouuibtn:hover::before {
+    opacity: 0.7;
+  }
+  
+  .pcnewtoyouuibtn::after {
+    content: "";
+    position: absolute;
+    inset: 0px;
+    background: linear-gradient(45deg, #0ce39a, #69007f, #fc0987);
+    border-radius: 9px;
+    transition: 0.5s;
+    opacity: 0;
+    filter: blur(20px);
+  }
+  
+  .pcnewtoyouuibtn:hover:after {
     opacity: 1;
   }
 
